@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".PerfilPetActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Voltar"
+            android:src="@drawable/arrow_back_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Perfil do Pet"
+            android:textColor="#2CC13D"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/btn_back"
+            app:layout_constraintStart_toEndOf="@id/btn_back"
+            app:layout_constraintTop_toTopOf="@id/btn_back" />
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_pet_foto"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="24dp"
+            android:background="#F0F0F0"
+            android:padding="24dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/add_photo_icone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_back"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium" />
+
+        <TextView
+            android:id="@+id/tv_pet_nome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Maxi"
+            android:textColor="@android:color/black"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/iv_pet_foto"
+            app:layout_constraintTop_toTopOf="@id/iv_pet_foto" />
+
+        <ImageButton
+            android:id="@+id/btn_edit_name"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Editar nome"
+            android:src="@drawable/editar"
+            app:layout_constraintBottom_toBottomOf="@id/tv_pet_nome"
+            app:layout_constraintStart_toEndOf="@id/tv_pet_nome"
+            app:layout_constraintTop_toTopOf="@id/tv_pet_nome" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_grupo_raca"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/tv_pet_nome"
+            app:layout_constraintTop_toBottomOf="@id/tv_pet_nome">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_tipo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cachorro" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_raca"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Border Collie" />
+        </com.google.android.material.chip.ChipGroup>
+
+
+        <TextView
+            android:id="@+id/tv_aparencia_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Descriçao do Pet"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_pet_foto" />
+
+        <ImageButton
+            android:id="@+id/btn_edit_aparencia"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Editar aparência"
+            android:src="@drawable/editar"
+            app:layout_constraintBottom_toBottomOf="@id/tv_aparencia_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_aparencia_title" />
+
+        <TextView
+            android:id="@+id/tv_aparencia_descricao"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Adicione alguma informação sobre características e outras coisas importantes sobre seu pet."
+            android:textColor="#555555"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_aparencia_title" />
+
+
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="#E0E0E0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_aparencia_descricao" />
+
+        <TextView
+            android:id="@+id/label_genero"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Gênero"
+            android:textColor="#555555"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider1" />
+
+        <TextView
+            android:id="@+id/tv_valor_genero"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Masculino"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/label_genero"
+            app:layout_constraintEnd_toStartOf="@id/btn_edit_genero" />
+
+        <ImageButton
+            android:id="@+id/btn_edit_genero"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Editar gênero"
+            android:src="@drawable/editar"
+            app:layout_constraintBottom_toBottomOf="@id/label_genero"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/label_genero" />
+
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="#E0E0E0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_genero" />
+
+        <TextView
+            android:id="@+id/label_peso"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Peso"
+            android:textColor="#555555"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider2" />
+
+        <TextView
+            android:id="@+id/tv_peso_valor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="22,2Kg"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/label_peso"
+            app:layout_constraintEnd_toStartOf="@id/btn_edit_peso" />
+
+        <ImageButton
+            android:id="@+id/btn_edit_peso"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Editar tamanho"
+            android:src="@drawable/editar"
+            app:layout_constraintBottom_toBottomOf="@id/label_peso"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/label_peso" />
+
+        <View
+            android:id="@+id/divider3"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="#E0E0E0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_peso" />
+
+
+
+
+        <TextView
+            android:id="@+id/tv_titulo_datas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Datas Importantes"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_peso" />
+
+        <ImageButton
+            android:id="@+id/btn_edit_aniversario"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Editar aniversário"
+            android:src="@drawable/calendar_month"
+            app:layout_constraintBottom_toBottomOf="@id/tv_titulo_datas"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_titulo_datas" />
+
+        <ImageView
+            android:id="@+id/iv_aniversario_icon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/transparent"
+            android:padding="12dp"
+            android:src="@drawable/cake"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_titulo_datas" />
+
+        <TextView
+            android:id="@+id/label_aniversario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+
+            android:text="Aniversário"
+            android:textColor="#555555"
+            app:layout_constraintStart_toEndOf="@id/iv_aniversario_icon"
+            app:layout_constraintTop_toTopOf="@id/iv_aniversario_icon" />
+
+        <TextView
+            android:id="@+id/tv_aniversario_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3 de Novembro 2019"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/label_aniversario"
+            app:layout_constraintTop_toBottomOf="@id/label_aniversario" />
+
+        <TextView
+            android:id="@+id/tv_idade_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3 Anos"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/tv_aniversario_value"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/label_aniversario" />
+
+
+        <View
+            android:id="@+id/divider4"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="#E0E0E0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_aniversario_icon" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

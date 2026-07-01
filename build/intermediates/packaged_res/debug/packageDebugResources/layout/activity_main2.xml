@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#34A853"
+    android:gravity="center"
+    android:padding="16dp"
+    tools:context=".MainActivity2">
+
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="300dp"
+            android:layout_height="180dp"
+            android:layout_marginTop="0in"
+            android:layout_marginBottom="2dp"
+            android:src="@drawable/hoofcare"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Entre com a sua conta\n Digite seu email para se entrar nesse app."
+            android:textColor="@color/white" />
+
+
+        <EditText
+            android:id="@+id/username"
+            android:layout_width="375dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/rounded_corner"
+            android:hint="email@exemplo.com"
+            android:inputType="textEmailAddress"
+            android:padding="8dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textSize="20dp" />
+
+        <EditText
+            android:id="@+id/senha"
+            android:layout_width="375dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_corner"
+            android:hint="Senha"
+            android:inputType="textPassword"
+            android:padding="8dp"
+            android:textColorHint="@color/black" />
+
+        <Button
+            android:id="@+id/continued"
+            android:layout_width="375dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#000000"
+            android:text="Continue"
+            android:textColor="@color/white" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:background="#BDBDBD" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp"
+                android:text="Ou"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:background="#BDBDBD" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/google"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:drawableLeft="@drawable/google_icon_mini"
+            android:text="Continuar com o Google"
+
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/facebook"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:drawableLeft="@drawable/facebook_icon_mini"
+            android:text="Continuar com o Facebook"
+            android:textColor="@color/black" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#34A853"
+            android:textColor="@color/white"
+            android:text="Não possui uma conta?"
+            android:id="@+id/redirect"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:text="Ao clicar em continuar, você concorda com nossos Termos de Serviço e Política de Privacidade."
+            android:textAlignment="center"
+            android:textColor="@color/white" />
+    </LinearLayout>
+</RelativeLayout>

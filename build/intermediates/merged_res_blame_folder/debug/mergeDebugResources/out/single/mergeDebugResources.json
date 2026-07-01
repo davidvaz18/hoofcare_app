@@ -1,0 +1,350 @@
+[
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_send_message_back.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/send_message_back.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_pop_adicionar_card.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/pop_adicionar_card.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_perfil_ic.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/perfil_ic.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_botaopreto.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/botaopreto.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_myloginbackground.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/myloginbackground.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_activity_user_profile02.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/activity_user_profile02.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_activity_cadastro_pet.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/activity_cadastro_pet.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_edit_24.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/edit_24.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_item_message.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/item_message.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_activity_configuracoes_app.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/activity_configuracoes_app.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_item_do_card_ativo.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/item_do_card_ativo.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_cachorro_acariciado_png.png.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/cachorro_acariciado_png.png"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/xml_data_extraction_rules.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_imgalimentacao.png.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/imgalimentacao.png"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "com.example.hoof_care_02-main-72:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_send_button_icon.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/send_button_icon.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_edt_back.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/edt_back.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_circle_background.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/circle_background.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "com.example.hoof_care_02-main-72:/mipmap-hdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_botaoprofile.png.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/botaoprofile.png"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_activity_adicao_pet.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/activity_adicao_pet.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_activity_main2.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/activity_main2.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_arrow_back_icon.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/arrow_back_icon.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_facebook_icon.png.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/facebook_icon.png"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "com.example.hoof_care_02-main-72:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_google_icon_mini.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/google_icon_mini.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_circle_status.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/circle_status.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_botaomaiscachorro.png.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/botaomaiscachorro.png"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_cachorrocoleira2.png.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/cachorrocoleira2.png"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_pagina_home.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/pagina_home.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "com.example.hoof_care_02-main-72:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/xml_backup_rules.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_custom_progress_bar_green.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/custom_progress_bar_green.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_item_dog_card.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/item_dog_card.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.hoof_care_02-main-72:/mipmap-mdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/raw_dogbotstudy.json.flat",
+        "source": "com.example.hoof_care_02-main-72:/raw/dogbotstudy.json"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_hoofcare.png.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/hoofcare.png"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_activity_sign_in.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/activity_sign_in.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_arrow_back_24.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/arrow_back_24.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_activity_user_profile03.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/activity_user_profile03.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_cachorro_bolo3.png.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/cachorro_bolo3.png"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_imgduvidas.png.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/imgduvidas.png"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_activity_perfil_pet.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/activity_perfil_pet.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_google_icon_logo_svgrepo_com.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/google_icon_logo_svgrepo_com.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_btn_adicionar.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/btn_adicionar.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_add_photo_icone.png.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/add_photo_icone.png"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_lembretes_ic.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/lembretes_ic.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_cachorro_perfil.jpg.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/cachorro_perfil.jpg"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_dark_mode.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/dark_mode.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.hoof_care_02-main-72:/mipmap-hdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_activity_main.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_activity_lembretes.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/activity_lembretes.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_calendar_month.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/calendar_month.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_google_icon.png.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/google_icon.png"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_activity_hoofbot.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/activity_hoofbot.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_delete_conta_ic.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/delete_conta_ic.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_activity_user_profile04.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/activity_user_profile04.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_cachorro_feliz5.png.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/cachorro_feliz5.png"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_barranavegacao.png.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/barranavegacao.png"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_settings_icon.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/settings_icon.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_editar.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/editar.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_info_ic.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/info_ic.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_fotousuario.png.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/fotousuario.png"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_gradcolor.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/gradcolor.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_icon_account_circle.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/icon_account_circle.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.hoof_care_02-main-72:/mipmap-xxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/color_botao_switch_bolinha_cor.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/color/botao_switch_bolinha_cor.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/color_botao_switch_trilho_cor.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/color/botao_switch_trilho_cor.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_facebook_icon_mini.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/facebook_icon_mini.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_imgsaude.png.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/imgsaude.png"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_cake.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/cake.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_rounded_corner_less.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/rounded_corner_less.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.hoof_care_02-main-72:/mipmap-xhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_chevron_left.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/chevron_left.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/layout_activity_user_profile01.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/layout/activity_user_profile01.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_botaohome.png.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/botaohome.png"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/raw_dogbotheader.json.flat",
+        "source": "com.example.hoof_care_02-main-72:/raw/dogbotheader.json"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/drawable_rounded_corner.xml.flat",
+        "source": "com.example.hoof_care_02-main-72:/drawable/rounded_corner.xml"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/font_solway_regular.ttf.flat",
+        "source": "com.example.hoof_care_02-main-72:/font/solway_regular.ttf"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/raw_dogbot2study.json.flat",
+        "source": "com.example.hoof_care_02-main-72:/raw/dogbot2study.json"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/raw_personicon.json.flat",
+        "source": "com.example.hoof_care_02-main-72:/raw/personicon.json"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "com.example.hoof_care_02-main-72:/mipmap-mdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.hoof_care_02-debug-70:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.hoof_care_02-main-72:/mipmap-xxxhdpi/ic_launcher_round.webp"
+    }
+]

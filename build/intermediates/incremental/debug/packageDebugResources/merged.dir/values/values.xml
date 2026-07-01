@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="cor_alimentacao">#4CAF50</color>
+    <color name="cor_fisica">#FF9800</color>
+    <color name="cor_outro">#7E57C2</color>
+    <color name="cor_padrao">#757575</color>
+    <color name="end">#FF03DAC5</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="start">#FF018786</color>
+    <color name="transparent">#00000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">Hoof_Care_02</string>
+    <string name="card_do_cachorro">Card do cachorro</string>
+    <style name="Base.Theme.Hoof_Care_02" parent="Theme.Material3.DayNight.NoActionBar">
+        
+        
+    </style>
+    <style name="Theme.Hoof_Care_02" parent="Base.Theme.Hoof_Care_02"/>
+</resources>

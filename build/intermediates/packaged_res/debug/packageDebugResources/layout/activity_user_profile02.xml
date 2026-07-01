@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UserProfileActivity01"
+    android:background="@color/white"
+    >
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/chevron_left"
+        android:contentDescription="@string/app_name"
+        android:layout_gravity="start|bottom"/>
+
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:id="@+id/topProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_height="8dp"
+        android:layout_marginTop="55dp"
+        android:max="100"
+        android:progress="40"
+        android:progressDrawable="@drawable/custom_progress_bar_green" />
+
+    <ImageView
+        android:id="@+id/cachorro_acariciado"
+        android:layout_width="320dp"
+        android:layout_height="135dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="105dp"
+        android:layout_marginEnd="41dp"
+        android:src="@drawable/cachorrocoleira2" />
+
+    <TextView
+        android:id="@+id/textDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="240dp"
+        android:layout_marginEnd="0dp"
+        android:gravity="center"
+        android:fontFamily="@font/solway_regular"
+        android:textSize="24sp"
+        android:text="O seu cão é:" />
+
+    <LinearLayout
+        android:id="@+id/buttonsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textDescription"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button1"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/rounded_corner"
+            android:text="Menino"
+            android:textColor="@android:color/black"
+            android:fontFamily="@font/solway_regular"
+            android:textSize="16sp"
+            android:textAllCaps="false" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button2"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/rounded_corner"
+            android:text="Menina"
+            android:textColor="@android:color/black"
+            android:fontFamily="@font/solway_regular"
+            android:textSize="16sp"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
+</RelativeLayout>
