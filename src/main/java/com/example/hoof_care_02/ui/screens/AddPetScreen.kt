@@ -47,7 +47,7 @@ fun AddPetScreen(
     var birthdayApi by remember { mutableStateOf<String?>(null) }
     var sex by remember { mutableStateOf<String?>(null) }
     var selectedBreedId by remember { mutableStateOf<Int?>(null) }
-    var selectedBreedName by remember { mutableStateOf("Escolha a raça") }
+    var selectedBreedName by remember { mutableStateOf("") }
 
     var breeds by remember { mutableStateOf<List<Breed>>(emptyList()) }
     var breedsExpanded by remember { mutableStateOf(false) }
@@ -60,17 +60,41 @@ fun AddPetScreen(
         )
     }
 
-    val calendar = Calendar.getInstance()
-    val datePickerDialog = DatePickerDialog(
-        context,
-        { _, year, month, dayOfMonth ->
-            birthdayApi = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth)
-            birthdayDisplay = String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year)
-        },
-        calendar.get(Calendar.YEAR),
-        calendar.get(Calendar.MONTH),
-        calendar.get(Calendar.DAY_OF_MONTH)
-    )
+    // Resolve o breed_id automaticamente quando o texto digitado bate exatamente
+    // (ignorando maiúsculas/minúsculas) com uma raça já carregada do backend.
+    // Isso cobre o caso de o usuário digitar o nome certinho e seguir em frente
+    // sem tocar na sugestão da lista.
+    LaunchedEffect(selectedBreedName, breeds) {
+        if (selectedBreedId == null && selectedBreedName.isNotBlank()) {
+            val match = breeds.firstOrNull { it.name.equals(selectedBreedName, ignoreCase = true) }
+            if (match != null) {
+                selectedBreedId = match.id
+            }
+        }
+    }
+
+    // ANTES: o DatePickerDialog era construído toda vez que a tela recompunha
+    // (a cada tecla digitada em qualquer campo, por exemplo), o que é uma causa
+    // conhecida de crash em Compose. Agora ele é criado apenas uma vez, com
+    // `remember`, e a construção é protegida com try/catch — se falhar por
+    // qualquer motivo de contexto, a tela não derruba o app inteiro, só o
+    // seletor de data fica indisponível (com aviso ao tocar no botão).
+    val datePickerDialog = remember {
+        try {
+            DatePickerDialog(
+                context,
+                { _, year, month, dayOfMonth ->
+                    birthdayApi = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth)
+                    birthdayDisplay = String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year)
+                },
+                Calendar.getInstance().get(Calendar.YEAR),
+                Calendar.getInstance().get(Calendar.MONTH),
+                Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+            )
+        } catch (e: Exception) {
+            null
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -100,35 +124,92 @@ fun AddPetScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Breed Spinner (Exposed Dropdown Menu)
-            Box(modifier = Modifier.fillMaxWidth()) {
+            // Campo de raça: agora é um campo de texto digitável, com sugestões
+            // filtradas conforme o usuário digita (em vez de uma lista fixa).
+            // O ID só é confirmado quando o usuário toca em uma sugestão da lista
+            // (o backend exige breed_id, então digitar um nome que não existe na
+            // lista de raças do servidor não seleciona nenhum ID).
+            ExposedDropdownMenuBox(
+                expanded = breedsExpanded && breeds.isNotEmpty(),
+                onExpandedChange = { breedsExpanded = it },
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 OutlinedTextField(
                     value = selectedBreedName,
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Raça") },
-                    trailingIcon = {
-                        IconButton(onClick = { breedsExpanded = true }) {
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = null)
-                        }
+                    onValueChange = { typed ->
+                        selectedBreedName = typed
+                        selectedBreedId = null // limpa a seleção até o usuário escolher uma sugestão
+                        breedsExpanded = typed.isNotBlank()
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    label = { Text("Raça") },
+                    placeholder = { Text("Digite para buscar a raça...") },
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black
+                    ),
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
                 )
-                DropdownMenu(
-                    expanded = breedsExpanded,
-                    onDismissRequest = { breedsExpanded = false },
-                    modifier = Modifier.fillMaxWidth(0.9f)
-                ) {
-                    breeds.forEach { breed ->
-                        DropdownMenuItem(
-                            text = { Text(breed.name) },
-                            onClick = {
-                                selectedBreedId = breed.id
-                                selectedBreedName = breed.name
-                                breedsExpanded = false
-                            }
-                        )
+
+                val filteredBreeds = remember(selectedBreedName, breeds) {
+                    if (selectedBreedName.isBlank()) {
+                        breeds
+                    } else {
+                        breeds.filter { it.name.contains(selectedBreedName, ignoreCase = true) }
                     }
+                }
+
+                if (filteredBreeds.isNotEmpty()) {
+                    ExposedDropdownMenu(
+                        expanded = breedsExpanded,
+                        onDismissRequest = { breedsExpanded = false }
+                    ) {
+                        filteredBreeds.forEach { breed ->
+                            DropdownMenuItem(
+                                text = { Text(breed.name) },
+                                onClick = {
+                                    selectedBreedId = breed.id
+                                    selectedBreedName = breed.name
+                                    breedsExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Aviso de status logo abaixo do campo, para deixar claro o que está
+            // acontecendo: raça confirmada, raça não reconhecida, ou lista de
+            // raças que não chegou a carregar do backend.
+            when {
+                breeds.isEmpty() -> {
+                    Text(
+                        text = "Não foi possível carregar a lista de raças do servidor. Verifique sua conexão.",
+                        color = Color(0xFFB3261E),
+                        fontSize = 12.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
+                selectedBreedId != null -> {
+                    Text(
+                        text = "✓ Raça reconhecida",
+                        color = HoofGreenDark,
+                        fontSize = 12.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
+                selectedBreedName.isNotBlank() -> {
+                    Text(
+                        text = "Nenhuma raça encontrada com esse nome. Toque em uma sugestão da lista.",
+                        color = Color(0xFFB3261E),
+                        fontSize = 12.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
                 }
             }
 
@@ -162,7 +243,14 @@ fun AddPetScreen(
             }
 
             OutlinedButton(
-                onClick = { datePickerDialog.show() },
+                onClick = {
+                    try {
+                        datePickerDialog?.show()
+                            ?: Toast.makeText(context, "Não foi possível abrir o seletor de data.", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(context, "Não foi possível abrir o seletor de data.", Toast.LENGTH_SHORT).show()
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(birthdayDisplay)
@@ -178,8 +266,26 @@ fun AddPetScreen(
 
             Button(
                 onClick = {
-                    if (name.isBlank() || selectedBreedId == null || sex == null) {
-                        Toast.makeText(context, "Nome, Raça e Gênero são obrigatórios.", Toast.LENGTH_SHORT).show()
+                    val camposFaltando = buildList {
+                        if (name.isBlank()) add("Nome")
+                        if (selectedBreedId == null) {
+                            add(
+                                if (selectedBreedName.isBlank()) {
+                                    "Raça"
+                                } else {
+                                    "Raça (toque em uma sugestão da lista ou digite o nome exato de uma raça cadastrada)"
+                                }
+                            )
+                        }
+                        if (sex == null) add("Gênero")
+                    }
+
+                    if (camposFaltando.isNotEmpty()) {
+                        Toast.makeText(
+                            context,
+                            "Campo(s) obrigatório(s) faltando: ${camposFaltando.joinToString(", ")}",
+                            Toast.LENGTH_LONG
+                        ).show()
                     } else {
                         registrarCachorro(
                             name = name,

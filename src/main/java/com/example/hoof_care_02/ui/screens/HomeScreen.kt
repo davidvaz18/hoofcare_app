@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hoof_care_02.R
@@ -39,9 +38,9 @@ fun HomeScreen(
 
     Scaffold(
         bottomBar = {
-            BottomNavigationBar(
+            AppBottomNavigationBar(
                 onHomeClick = { /* Já estamos na Home */ },
-                onAddPetClick = onNavigateToPets,
+                onPetsClick = onNavigateToPets,
                 onProfileClick = onNavigateToProfile
             )
         }
@@ -67,6 +66,7 @@ fun HomeScreen(
                         modifier = Modifier
                             .size(60.dp)
                             .clip(CircleShape)
+                            .clickable { onNavigateToProfile() }
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(
@@ -110,7 +110,7 @@ fun HomeScreen(
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Start
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Start
                 )
             }
 
@@ -149,7 +149,12 @@ fun HomeScreen(
                     iconRes = R.drawable.imgsaude,
                     modifier = Modifier.weight(1f).height(130.dp),
                     onClick = {
-                        Toast.makeText(context, "Funcionalidade de Saúde em breve!", Toast.LENGTH_SHORT).show()
+                        if (selectedPet != null) {
+                            // Poderia navegar para uma rota específica de saúde
+                            Toast.makeText(context, "Saúde disponível na lista de Pets.", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, "Selecione um pet primeiro.", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 )
 
@@ -161,65 +166,6 @@ fun HomeScreen(
                     onClick = onNavigateToChatbot
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun HomeActionButton(
-    text: String,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-        shape = RoundedCornerShape(24.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF38C075)),
-        contentPadding = PaddingValues(16.dp)
-    ) {
-        Text(
-            text = text,
-            fontSize = 13.sp,
-            color = Color.White,
-            textAlign = TextAlign.Start,
-            lineHeight = 18.sp
-        )
-    }
-}
-
-@Composable
-fun HomeActionCard(
-    text: String,
-    iconRes: Int,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = modifier.clickable { onClick() },
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF38C075))
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Image(
-                painter = painterResource(id = iconRes),
-                contentDescription = null,
-                modifier = Modifier.size(60.dp)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = text,
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
         }
     }
 }

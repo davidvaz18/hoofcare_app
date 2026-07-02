@@ -15,16 +15,6 @@ import com.example.hoof_care_02.ui.screens.*
 
 /**
  * NavHost único do app.
- *
- * Etapa 1: Auth (Splash -> Login -> SignIn).
- * Etapa 2: Pets (Lista de Pets -> Cadastro de Pet).
- * Etapa 3: Home (Migração da PaginaHome para Compose).
- * Etapa 4: Lembretes (Migração da LembretesActivity para Compose).
- * Etapa 5: Perfil (UserProfileScreens 01-04).
- * Etapa 6: Perfil do Pet (PetProfileScreen).
- * Etapa 7: Chatbot (ChatbotScreen).
- * Etapa 8: Configurações (SettingsScreen).
- * Etapa 9: Clínicas (ClinicasScreen).
  */
 @Composable
 fun HoofCareNavHost(
@@ -64,6 +54,7 @@ fun HoofCareNavHost(
         composable(HoofCareDestinations.SIGN_IN) {
             SignInScreen(
                 onSignUpSuccess = {
+                    // Após o primeiro cadastro, vai para as perguntas de onboarding
                     navController.navigate(HoofCareDestinations.USER_PROFILE_01)
                 }
             )
@@ -81,7 +72,8 @@ fun HoofCareNavHost(
                     navController.navigate(HoofCareDestinations.CONFIGURACOES)
                 },
                 onNavigateToProfile = {
-                    navController.navigate(HoofCareDestinations.USER_PROFILE_01)
+                    // CORREÇÃO: Agora aponta para a tela de Perfil real, não para o onboarding
+                    navController.navigate(HoofCareDestinations.USER_PROFILE)
                 },
                 onNavigateToChatbot = {
                     navController.navigate(HoofCareDestinations.CHATBOT)
@@ -92,18 +84,33 @@ fun HoofCareNavHost(
             )
         }
 
+        composable(HoofCareDestinations.USER_PROFILE) {
+            UserProfileScreen(
+                onBack = { navController.popBackStack() },
+                onLogout = {
+                    // Lógica de logout básica
+                    navController.navigate(HoofCareDestinations.LOGIN) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         composable(HoofCareDestinations.ADICAO_PET) {
             DogListScreen(
                 onNavigateToAddPet = {
                     navController.navigate(HoofCareDestinations.CADASTRO_PET)
                 },
-                onNavigateToProfile = { petId ->
+                onNavigateToPetProfile = { petId ->
                     navController.navigate(HoofCareDestinations.perfilPetRoute(petId))
                 },
                 onNavigateHome = {
                     navController.navigate(HoofCareDestinations.PAGINA_HOME) {
                         popUpTo(HoofCareDestinations.PAGINA_HOME) { inclusive = true }
                     }
+                },
+                onNavigateToUserProfile = {
+                    navController.navigate(HoofCareDestinations.USER_PROFILE)
                 },
                 onBack = {
                     navController.popBackStack()
@@ -155,7 +162,7 @@ fun HoofCareNavHost(
             )
         }
 
-        // --- FLUXO DE PERFIL ---
+        // --- FLUXO DE ONBOARDING (PERGUNTAS INICIAIS) ---
         composable(HoofCareDestinations.USER_PROFILE_01) {
             UserProfileScreen01(
                 onNext = { navController.navigate(HoofCareDestinations.USER_PROFILE_02) },
