@@ -231,6 +231,10 @@ fun UserProfileScreen04(
                 onValueChange = { breed = it },
                 label = { Text("Raça") },
                 modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
+                ),
                 trailingIcon = {
                     IconButton(onClick = { expanded = !expanded }) {
                         Icon(Icons.Default.ArrowDropDown, contentDescription = null)

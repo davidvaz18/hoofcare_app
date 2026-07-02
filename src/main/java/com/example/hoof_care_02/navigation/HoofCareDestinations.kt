@@ -14,8 +14,9 @@ object HoofCareDestinations {
     const val PERFIL_PET = "perfil_pet/{petId}"
     const val CONFIGURACOES = "configuracoes"
     const val CLINICAS = "clinicas"
+    const val USER_PROFILE = "user_profile"
 
-    // Fluxo de Perfil do Usuário
+    // Fluxo de Cadastro de Perfil/Onboarding
     const val USER_PROFILE_01 = "user_profile_01"
     const val USER_PROFILE_02 = "user_profile_02"
     const val USER_PROFILE_03 = "user_profile_03"

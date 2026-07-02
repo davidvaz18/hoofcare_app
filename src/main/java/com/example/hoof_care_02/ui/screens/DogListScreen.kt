@@ -1,13 +1,10 @@
 package com.example.hoof_care_02.ui.screens
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -19,7 +16,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,6 +32,7 @@ fun DogListScreen(
     onNavigateToAddPet: () -> Unit,
     onNavigateToProfile: (String) -> Unit,
     onNavigateHome: () -> Unit,
+    onNavigateToUserProfile: () -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
@@ -68,7 +65,7 @@ fun DogListScreen(
             }
         },
         bottomBar = {
-            BottomNavigationBar(
+            AppBottomNavigationBar(
                 onHomeClick = onNavigateHome,
                 onAddPetClick = onNavigateToAddPet,
                 onProfileClick = { /* Já estamos na lista de pets */ }
@@ -97,11 +94,11 @@ fun DogListScreen(
                     items(dogList) { dog ->
                         DogCard(
                             dog = dog,
-                            onVerPerfil = { onNavigateToProfile(dog.id) },
+                            onVerPerfil = { onNavigateToPetProfile(dog.id) },
                             onSelecionar = {
                                 UserProfileData.cachorroSelecionado = dog
                                 Toast.makeText(context, "${dog.name} selecionado!", Toast.LENGTH_SHORT).show()
-                                onBack()
+                                onNavigateHome()
                             }
                         )
                     }
@@ -243,4 +240,61 @@ fun BottomNavigationBar(
             }
         }
     }
+
+private fun fetchDogs(onSuccess: (List<Dog>) -> Unit, onError: (String) -> Unit) {
+    val token = UserProfileData.accessToken
+    if (token == null) {
+        onError("Erro de autenticação.")
+        return
+    }
+
+    val request = Request.Builder()
+        .url(DOGS_URL)
+        .addHeader("Authorization", "Bearer $token")
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            onError("Falha ao buscar pets.")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            val responseBody = response.body?.string()
+            if (response.isSuccessful && responseBody != null) {
+                try {
+                    val dogs = parseDogs(responseBody)
+                    onSuccess(dogs)
+                } catch (e: Exception) {
+                    onError("Erro ao processar dados.")
+                }
+            } else {
+                onError("Nenhum pet encontrado.")
+            }
+        }
+    })
+}
+
+private fun parseDogs(jsonString: String): List<Dog> {
+    val dogs = mutableListOf<Dog>()
+    val jsonArray = JSONArray(jsonString)
+    for (i in 0 until jsonArray.length()) {
+        val dogObject = jsonArray.getJSONObject(i)
+        val breedObject = dogObject.getJSONObject("breed")
+        val breed = Breed(
+            id = breedObject.getInt("id"),
+            name = breedObject.getString("name")
+        )
+        val dog = Dog(
+            id = dogObject.getInt("id"),
+            name = dogObject.getString("name"),
+            age = dogObject.getInt("age"),
+            sex = dogObject.getString("sex"),
+            photo = dogObject.optString("photo", null),
+            birthday = dogObject.optString("birthday", null),
+            weight = dogObject.optDouble("weight", 0.0),
+            breed = breed
+        )
+        dogs.add(dog)
+    }
+    return dogs
 }

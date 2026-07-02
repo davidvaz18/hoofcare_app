@@ -1,3 +1,9 @@
+*.hprof
+.gradle/
+build/
+.kotlin/
+.idea/
+local.properties
 java_pid*.hprof
 build/
 app/build/
