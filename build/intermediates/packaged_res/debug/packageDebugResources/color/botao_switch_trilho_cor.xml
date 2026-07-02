@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Cor do trilho quando o switch ta ligado  (transparencia) -->
-    <item android:color="#804CAF50" android:state_checked="true" />
-    <!-- Cor padrao (desligado) -->
-    <item android:color="#757575" />
-</selector>

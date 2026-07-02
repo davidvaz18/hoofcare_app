@@ -2,7 +2,6 @@ package com.example.hoof_care_02.ui.theme
 
 import android.app.Activity
 import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -25,7 +24,12 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun HoofCareTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    // O app foi desenhado inteiramente para tema claro (várias telas forçam fundo
+    // branco/verde manualmente). Seguir o tema escuro do sistema fazia o texto ficar
+    // quase invisível nesses fundos claros, então ignoramos isSystemInDarkTheme()
+    // e sempre usamos as cores claras — a não ser que o próprio app ganhe telas
+    // desenhadas para dark mode no futuro.
+    darkTheme: Boolean = false,
     // Dynamic color (Material You) desligado por padrão para preservar a identidade visual original do app
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit

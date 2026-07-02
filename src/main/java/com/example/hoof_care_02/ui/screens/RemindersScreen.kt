@@ -209,12 +209,20 @@ fun AddReminderDialog(
                         value = title,
                         onValueChange = { title = it },
                         label = { Text("Título") },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black
+                        ),
                         modifier = Modifier.fillMaxWidth()
                     )
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
                         label = { Text("Descrição") },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black
+                        ),
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -339,7 +347,7 @@ private fun saveReminder(
                     val horario = created.getString("horario")
                     val h = horario.substring(0, 2).toInt()
                     val m = horario.substring(3, 5).toInt()
-                    
+
                     AlarmScheduler.scheduleRepeatingAlarm(
                         context, h, m, id,
                         created.getString("titulo_display"),

@@ -16,10 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.hoof_care_02.ChatbotMessageModel
+import com.example.hoof_care_02.model.ChatbotMessage
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
 import kotlinx.coroutines.launch
@@ -31,15 +30,14 @@ fun ChatbotScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    
-    // Configuração do Gemini (mantendo a mesma chave e instruções)
+
     val generativeModel = remember {
         GenerativeModel(
-            modelName = "gemini-1.5-flash", // Ajustado para versão estável suportada pela SDK 0.9.0
+            modelName = "gemini-1.5-flash",
             apiKey = "AIzaSyDv2O3cgnt3wOH2ux0yDAVLdsEqJdIxXF8"
         )
     }
-    
+
     val chat = remember {
         generativeModel.startChat(
             history = listOf(
@@ -50,18 +48,16 @@ fun ChatbotScreen(
     }
 
     var inputText by remember { mutableStateOf("") }
-    val messages = remember { mutableStateListOf<ChatbotMessageModel>() }
+    val messages = remember { mutableStateListOf<ChatbotMessage>() }
     var isLoading by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
 
-    // Mensagem inicial do bot (visível)
     LaunchedEffect(Unit) {
         if (messages.isEmpty()) {
-            messages.add(ChatbotMessageModel("Au! Estou pronto para ajudar os donos de cães. Qual é a primeira pergunta?", "bot"))
+            messages.add(ChatbotMessage("Au! Estou pronto para ajudar os donos de cães. Qual é a primeira pergunta?", "bot"))
         }
     }
 
-    // Scroll automático para a última mensagem
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.size - 1)
@@ -106,7 +102,6 @@ fun ChatbotScreen(
                 }
             }
 
-            // Input Area
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shadowElevation = 8.dp,
@@ -125,26 +120,30 @@ fun ChatbotScreen(
                         modifier = Modifier.weight(1f),
                         placeholder = { Text("Pergunte algo ao Totó...") },
                         maxLines = 3,
-                        shape = RoundedCornerShape(24.dp)
+                        shape = RoundedCornerShape(24.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black
+                        )
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     IconButton(
                         onClick = {
                             val question = inputText.trim()
                             if (question.isNotEmpty()) {
-                                messages.add(ChatbotMessageModel(question, "me"))
+                                messages.add(ChatbotMessage(question, "me"))
                                 inputText = ""
                                 isLoading = true
-                                
+
                                 scope.launch {
                                     try {
                                         val response = chat.sendMessage(question)
                                         val responseText = response.text
                                         if (responseText != null) {
-                                            messages.add(ChatbotMessageModel(responseText, "bot"))
+                                            messages.add(ChatbotMessage(responseText, "bot"))
                                         }
                                     } catch (e: Exception) {
-                                        messages.add(ChatbotMessageModel("Desculpe, tive um problema. Tente novamente!", "bot"))
+                                        messages.add(ChatbotMessage("Desculpe, tive um problema. Tente novamente!", "bot"))
                                     } finally {
                                         isLoading = false
                                     }
@@ -165,8 +164,8 @@ fun ChatbotScreen(
 }
 
 @Composable
-fun ChatBubble(message: ChatbotMessageModel) {
-    val isMe = message.getSentBy() == "me"
+fun ChatBubble(message: ChatbotMessage) {
+    val isMe = message.sentBy == "me"
     val alignment = if (isMe) Alignment.CenterEnd else Alignment.CenterStart
     val bgColor = if (isMe) Color(0xFF38C075) else Color.White
     val textColor = if (isMe) Color.White else Color.Black
@@ -184,7 +183,7 @@ fun ChatBubble(message: ChatbotMessageModel) {
             modifier = Modifier.widthIn(max = 280.dp)
         ) {
             Text(
-                text = message.getMessage(),
+                text = message.message,
                 color = textColor,
                 modifier = Modifier.padding(12.dp),
                 fontSize = 16.sp

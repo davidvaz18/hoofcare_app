@@ -1,14 +1,10 @@
 package com.example.hoof_care_02.ui.screens
 
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -20,7 +16,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,8 +35,9 @@ private const val DOGS_URL = "http://10.0.2.2:8000/api/dogs/"
 @Composable
 fun DogListScreen(
     onNavigateToAddPet: () -> Unit,
-    onNavigateToProfile: (Int) -> Unit,
+    onNavigateToPetProfile: (Int) -> Unit,
     onNavigateHome: () -> Unit,
+    onNavigateToUserProfile: () -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
@@ -74,10 +70,10 @@ fun DogListScreen(
             }
         },
         bottomBar = {
-            BottomNavigationBar(
+            AppBottomNavigationBar(
                 onHomeClick = onNavigateHome,
-                onAddPetClick = onNavigateToAddPet,
-                onProfileClick = { /* Já estamos na lista de pets ou similar */ }
+                onPetsClick = { /* Já estamos aqui */ },
+                onProfileClick = onNavigateToUserProfile
             )
         }
     ) { paddingValues ->
@@ -103,11 +99,11 @@ fun DogListScreen(
                     items(dogList) { dog ->
                         DogCard(
                             dog = dog,
-                            onVerPerfil = { onNavigateToProfile(dog.id) },
+                            onVerPerfil = { onNavigateToPetProfile(dog.id) },
                             onSelecionar = {
                                 UserProfileData.cachorroSelecionado = dog
                                 Toast.makeText(context, "${dog.name} selecionado!", Toast.LENGTH_SHORT).show()
-                                onBack()
+                                onNavigateHome()
                             }
                         )
                     }
@@ -117,137 +113,10 @@ fun DogListScreen(
     }
 }
 
-@Composable
-fun HeaderSection(userName: String) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painterResource(id = R.drawable.fotousuario),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(60.dp)
-                    .clip(CircleShape)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(text = "Olá, $userName!", fontSize = 18.sp)
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Meus Pets", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-    }
-}
-
-@Composable
-fun DogCard(
-    dog: Dog,
-    onVerPerfil: () -> Unit,
-    onSelecionar: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF38C075))
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                AsyncImage(
-                    model = dog.photo ?: R.drawable.ic_launcher_background,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop
-                )
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Column {
-                    Text(
-                        text = dog.name,
-                        color = Color.White,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(text = dog.breed.name, color = Color.White, fontSize = 16.sp)
-                    Text(text = "${dog.age} anos", color = Color.White, fontSize = 14.sp)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-            HorizontalDivider(color = Color.White.copy(alpha = 0.4f), thickness = 1.dp)
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                TextButton(onClick = onVerPerfil) {
-                    Text("Ver Perfil", color = Color.White)
-                }
-                TextButton(onClick = onSelecionar) {
-                    Text("Selecionar", color = Color.White)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun BottomNavigationBar(
-    onHomeClick: () -> Unit,
-    onAddPetClick: () -> Unit,
-    onProfileClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(75.dp)
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.barranavegacao),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.botaohome),
-                contentDescription = "Home",
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { onHomeClick() }
-            )
-            Image(
-                painter = painterResource(id = R.drawable.botaomaiscachorro),
-                contentDescription = "Adicionar",
-                modifier = Modifier
-                    .height(85.dp)
-                    .weight(1f)
-                    .clickable { onAddPetClick() }
-            )
-            Image(
-                painter = painterResource(id = R.drawable.botaoprofile),
-                contentDescription = "Perfil",
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { onProfileClick() }
-            )
-        }
-    }
-}
-
 private fun fetchDogs(onSuccess: (List<Dog>) -> Unit, onError: (String) -> Unit) {
     val token = UserProfileData.accessToken
     if (token == null) {
-        onError("Erro de autenticação. Faça o login novamente.")
+        onError("Erro de autenticação.")
         return
     }
 
@@ -268,7 +137,7 @@ private fun fetchDogs(onSuccess: (List<Dog>) -> Unit, onError: (String) -> Unit)
                     val dogs = parseDogs(responseBody)
                     onSuccess(dogs)
                 } catch (e: Exception) {
-                    onError("Erro ao processar dados dos pets.")
+                    onError("Erro ao processar dados.")
                 }
             } else {
                 onError("Nenhum pet encontrado.")
