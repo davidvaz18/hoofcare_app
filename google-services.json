@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "131527054404",
+    "project_id": "back-hoofcare",
+    "storage_bucket": "back-hoofcare.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:131527054404:android:abf67532cf903ba7205811",
+        "android_client_info": {
+          "package_name": "com.example.hoof_care_02"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDirWm9nzSZFkXdUGb1YFDdpz3pvlbIzNU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
