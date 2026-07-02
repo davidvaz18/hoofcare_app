@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.hoof_care_02.data.repository.PetRepository
 import com.example.hoof_care_02.model.Breed
 import com.example.hoof_care_02.model.Dog
@@ -24,7 +25,7 @@ import com.example.hoof_care_02.ui.theme.HoofGreenDark
 import kotlinx.coroutines.launch
 import java.util.*
 
-// Lista fixa de raças (hardcoded) para substituir a API de breeds
+// Lista fixa de raças (pode ser migrada para o Firestore no futuro)
 private val FIXED_BREEDS = listOf(
     Breed("1", "Labrador"),
     Breed("2", "Poodle"),
@@ -51,32 +52,23 @@ fun AddPetScreen(
     var birthdayDisplay by remember { mutableStateOf("Data de Nascimento") }
     var birthdayApi by remember { mutableStateOf<String?>(null) }
     var sex by remember { mutableStateOf<String?>(null) }
-    var selectedBreedId by remember { mutableStateOf<Int?>(null) }
-    var selectedBreedName by remember { mutableStateOf("Escolha a raça") }
+    var selectedBreed by remember { mutableStateOf<Breed?>(null) }
+    var selectedBreedName by remember { mutableStateOf("") }
 
     var breedsExpanded by remember { mutableStateOf(false) }
     var sexExpanded by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
 
-    // Resolve o breed_id automaticamente quando o texto digitado bate exatamente
-    // (ignorando maiúsculas/minúsculas) com uma raça já carregada do backend.
-    // Isso cobre o caso de o usuário digitar o nome certinho e seguir em frente
-    // sem tocar na sugestão da lista.
-    LaunchedEffect(selectedBreedName, breeds) {
-        if (selectedBreedId == null && selectedBreedName.isNotBlank()) {
-            val match = breeds.firstOrNull { it.name.equals(selectedBreedName, ignoreCase = true) }
+    // Tenta encontrar a raça automaticamente se o usuário digitar o nome exato
+    LaunchedEffect(selectedBreedName) {
+        if (selectedBreed?.name != selectedBreedName) {
+            val match = FIXED_BREEDS.firstOrNull { it.name.equals(selectedBreedName, ignoreCase = true) }
             if (match != null) {
-                selectedBreedId = match.id
+                selectedBreed = match
             }
         }
     }
 
-    // ANTES: o DatePickerDialog era construído toda vez que a tela recompunha
-    // (a cada tecla digitada em qualquer campo, por exemplo), o que é uma causa
-    // conhecida de crash em Compose. Agora ele é criado apenas uma vez, com
-    // `remember`, e a construção é protegida com try/catch — se falhar por
-    // qualquer motivo de contexto, a tela não derruba o app inteiro, só o
-    // seletor de data fica indisponível (com aviso ao tocar no botão).
     val datePickerDialog = remember {
         try {
             DatePickerDialog(
@@ -123,84 +115,63 @@ fun AddPetScreen(
                 enabled = !isLoading
             )
 
-            // Campo de raça: agora é um campo de texto digitável, com sugestões
-            // filtradas conforme o usuário digita (em vez de uma lista fixa).
-            // O ID só é confirmado quando o usuário toca em uma sugestão da lista
-            // (o backend exige breed_id, então digitar um nome que não existe na
-            // lista de raças do servidor não seleciona nenhum ID).
+            // Campo de raça pesquisável (UI do colega integrada ao PetRepository)
             ExposedDropdownMenuBox(
-                expanded = breedsExpanded && breeds.isNotEmpty(),
-                onExpandedChange = { breedsExpanded = it },
+                expanded = breedsExpanded,
+                onExpandedChange = { if (!isLoading) breedsExpanded = it },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 OutlinedTextField(
                     value = selectedBreedName,
-                    onValueChange = { typed ->
-                        selectedBreedName = typed
-                        selectedBreedId = null // limpa a seleção até o usuário escolher uma sugestão
-                        breedsExpanded = typed.isNotBlank()
+                    onValueChange = { 
+                        selectedBreedName = it
+                        selectedBreed = null 
                     },
                     label = { Text("Raça") },
-                    trailingIcon = {
-                        IconButton(onClick = { if (!isLoading) breedsExpanded = true }) {
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = null)
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !isLoading
+                    placeholder = { Text("Digite para buscar...") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = breedsExpanded) },
+                    modifier = Modifier.menuAnchor().fillMaxWidth(),
+                    enabled = !isLoading,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black
+                    )
                 )
-                DropdownMenu(
-                    expanded = breedsExpanded,
-                    onDismissRequest = { breedsExpanded = false },
-                    modifier = Modifier.fillMaxWidth(0.9f)
-                ) {
-                    FIXED_BREEDS.forEach { breed ->
-                        DropdownMenuItem(
-                            text = { Text(breed.name) },
-                            onClick = {
-                                selectedBreed = breed
-                                selectedBreedName = breed.name
-                                breedsExpanded = false
-                            }
-                        )
+
+                val filteredBreeds = FIXED_BREEDS.filter { 
+                    it.name.contains(selectedBreedName, ignoreCase = true) 
+                }
+
+                if (filteredBreeds.isNotEmpty()) {
+                    ExposedDropdownMenu(
+                        expanded = breedsExpanded,
+                        onDismissRequest = { breedsExpanded = false }
+                    ) {
+                        filteredBreeds.forEach { breed ->
+                            DropdownMenuItem(
+                                text = { Text(breed.name) },
+                                onClick = {
+                                    selectedBreed = breed
+                                    selectedBreedName = breed.name
+                                    breedsExpanded = false
+                                }
+                            )
+                        }
                     }
                 }
             }
 
-            // Aviso de status logo abaixo do campo, para deixar claro o que está
-            // acontecendo: raça confirmada, raça não reconhecida, ou lista de
-            // raças que não chegou a carregar do backend.
-            when {
-                breeds.isEmpty() -> {
-                    Text(
-                        text = "Não foi possível carregar a lista de raças do servidor. Verifique sua conexão.",
-                        color = Color(0xFFB3261E),
-                        fontSize = 12.sp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                }
-                selectedBreedId != null -> {
-                    Text(
-                        text = "✓ Raça reconhecida",
-                        color = HoofGreenDark,
-                        fontSize = 12.sp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                }
-                selectedBreedName.isNotBlank() -> {
-                    Text(
-                        text = "Nenhuma raça encontrada com esse nome. Toque em uma sugestão da lista.",
-                        color = Color(0xFFB3261E),
-                        fontSize = 12.sp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                }
+            // Feedback de validação da raça
+            if (selectedBreedName.isNotBlank()) {
+                Text(
+                    text = if (selectedBreed != null) "✓ Raça reconhecida" else "Escolha uma raça da lista",
+                    color = if (selectedBreed != null) HoofGreenDark else Color.Red,
+                    fontSize = 12.sp,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
 
-            // Sex Spinner
+            // Gênero
             Box(modifier = Modifier.fillMaxWidth()) {
                 val sexDisplay = when(sex) {
                     "M" -> "Macho"
@@ -231,7 +202,7 @@ fun AddPetScreen(
             }
 
             OutlinedButton(
-                onClick = { datePickerDialog.show() },
+                onClick = { datePickerDialog?.show() },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading
             ) {
@@ -252,14 +223,19 @@ fun AddPetScreen(
             } else {
                 Button(
                     onClick = {
-                        if (name.isBlank() || selectedBreed == null || sex == null) {
-                            Toast.makeText(context, "Nome, Raça e Gênero são obrigatórios.", Toast.LENGTH_SHORT).show()
+                        val missingFields = mutableListOf<String>()
+                        if (name.isBlank()) missingFields.add("Nome")
+                        if (selectedBreed == null) missingFields.add("Raça")
+                        if (sex == null) missingFields.add("Gênero")
+
+                        if (missingFields.isNotEmpty()) {
+                            Toast.makeText(context, "Faltando: ${missingFields.joinToString(", ")}", Toast.LENGTH_LONG).show()
                         } else {
                             isLoading = true
                             scope.launch {
                                 try {
                                     val dog = Dog(
-                                        id = "",
+                                        id = "", // Firestore gera automático
                                         name = name,
                                         age = 0,
                                         sex = sex!!,
@@ -273,12 +249,11 @@ fun AddPetScreen(
                                         Toast.makeText(context, "Pet cadastrado com sucesso!", Toast.LENGTH_SHORT).show()
                                         onSuccess()
                                     } else {
-                                        val error = result.exceptionOrNull()
-                                        Toast.makeText(context, "Erro: ${error?.message}", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(context, "Erro: ${result.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
                                         isLoading = false
                                     }
                                 } catch (e: Exception) {
-                                    Toast.makeText(context, "Ocorreu um erro inesperado: ${e.message}", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(context, "Erro inesperado: ${e.message}", Toast.LENGTH_LONG).show()
                                     isLoading = false
                                 }
                             }

@@ -50,6 +50,7 @@ fun RemindersScreen(
         isLoading = true
         scope.launch {
             try {
+                // Migração Firebase
                 reminders = ReminderRepository.getReminders(selectedPet.id)
             } catch (e: Exception) {
                 Toast.makeText(context, "Erro ao carregar lembretes.", Toast.LENGTH_SHORT).show()
@@ -285,7 +286,7 @@ fun AddReminderDialog(
 
                         val newId = ReminderRepository.saveReminder(reminder)
                         if (newId != null) {
-                            // Agenda o alarme local
+                            // Agenda o alarme local (Funcionalidade do colega)
                             try {
                                 val h = timeForSave.substring(0, 2).toInt()
                                 val m = timeForSave.substring(3, 5).toInt()

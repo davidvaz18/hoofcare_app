@@ -8,5 +8,14 @@ data class Dog(
     val photo: String? = null,
     val birthday: String? = null,
     val weight: Double? = null,
-    val breed: Breed = Breed()
+    val breed: Breed = Breed(),
+    
+    // Campos de Saúde
+    val porte: String? = null,
+    val tipoSanguineo: String? = null,
+    val pelagem: String? = null,
+    val castrado: String? = null,
+    val descricaoLivre: String? = null,
+    val veterinarioNome: String? = null,
+    val veterinarioClinica: String? = null
 )

@@ -1,29 +1,42 @@
 package com.example.hoof_care_02.ui.screens
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import com.example.hoof_care_02.R
 import com.example.hoof_care_02.ui.theme.HoofGreenLight
 import kotlinx.coroutines.delay
 
-/**
- * Equivalente Compose da antiga MainActivity (activity_main.xml).
- * Mostra a logo por 3s e então navega para o Login, exatamente como o
- * Handler(Looper.getMainLooper()).postDelayed(... , 3000) original.
- */
 @Composable
 fun SplashScreen(
     onTimeout: () -> Unit
 ) {
+    val alpha = remember { Animatable(0f) }
+    val scale = remember { Animatable(0.7f) }
+
     LaunchedEffect(Unit) {
-        delay(3000)
+        // Animação de fade-in e zoom suave simultaneamente
+        alpha.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = 1000)
+        )
+        scale.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = 1000)
+        )
+        
+        delay(2000) // Aguarda mais 2 segundos antes de prosseguir
         onTimeout()
     }
 
@@ -37,7 +50,10 @@ fun SplashScreen(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.hoofcare),
-                contentDescription = null
+                contentDescription = "Logo HoofCare",
+                modifier = Modifier
+                    .alpha(alpha.value)
+                    .scale(scale.value)
             )
         }
     }

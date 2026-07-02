@@ -1,6 +1,6 @@
 package com.example.hoof_care_02.data.repository
 
-import com.example.hoof_care_02.model.Dog
+import com.example.hoof_care_02.model.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
@@ -40,7 +40,6 @@ object PetRepository {
         
         return try {
             if (dog.id.isEmpty()) {
-                // Gera o ID antes para garantir que o campo 'id' no objeto coincida com o do Firestore
                 val docRef = collection.document()
                 val dogWithId = dog.copy(id = docRef.id)
                 docRef.set(dogWithId).await()
@@ -50,6 +49,35 @@ object PetRepository {
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    // --- Métodos de Saúde (Firebase) ---
+
+    suspend fun getVacinas(petId: String): List<Vacina> {
+        val collection = petsCollection?.document(petId)?.collection("vacinas") ?: return emptyList()
+        return try {
+            collection.get().await().documents.mapNotNull { it.toObject<Vacina>() }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    suspend fun getAlergias(petId: String): List<Alergia> {
+        val collection = petsCollection?.document(petId)?.collection("alergias") ?: return emptyList()
+        return try {
+            collection.get().await().documents.mapNotNull { it.toObject<Alergia>() }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    suspend fun getProcedimentos(petId: String): List<VetProcedimento> {
+        val collection = petsCollection?.document(petId)?.collection("procedimentos") ?: return emptyList()
+        return try {
+            collection.get().await().documents.mapNotNull { it.toObject<VetProcedimento>() }
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 }

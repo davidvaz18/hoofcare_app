@@ -12,6 +12,7 @@ object HoofCareDestinations {
     const val PAGINA_HOME = "pagina_home"
     const val LEMBRETES = "lembretes"
     const val PERFIL_PET = "perfil_pet/{petId}"
+    const val SAUDE_PET = "saude_pet/{petId}"
     const val CONFIGURACOES = "configuracoes"
     const val CLINICAS = "clinicas"
     const val USER_PROFILE = "user_profile"
@@ -23,4 +24,5 @@ object HoofCareDestinations {
     const val USER_PROFILE_04 = "user_profile_04"
 
     fun perfilPetRoute(petId: String) = "perfil_pet/$petId"
+    fun saudePetRoute(petId: String) = "saude_pet/$petId"
 }

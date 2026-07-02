@@ -41,7 +41,7 @@ android {
 }
 
 dependencies {
-    // Firebase
+    // Firebase (Migração)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
@@ -58,6 +58,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.google.android.gms:play-services-location:21.0.1")
+    
+    // Chatbot (Funcionalidade Nova do Colega)
+    implementation(libs.generativeai)
 
     // Jetpack Compose
     implementation(platform(libs.androidx.compose.bom))
