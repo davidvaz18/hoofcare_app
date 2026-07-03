@@ -6,10 +6,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
 
-/**
- * Repositório para gestão de lembretes no Firestore.
- * Caminho: users/{uid}/pets/{petId}/reminders/{reminderId}
- */
 object ReminderRepository {
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
@@ -21,9 +17,7 @@ object ReminderRepository {
                 .collection("reminders")
         }
 
-    /**
-     * Busca todos os lembretes de um pet específico.
-     */
+
     suspend fun getReminders(petId: String): List<Reminder> {
         val collection = getRemindersCollection(petId) ?: return emptyList()
         return try {
@@ -34,14 +28,9 @@ object ReminderRepository {
         }
     }
 
-    /**
-     * Busca todos os lembretes de TODOS os pets do usuário (útil para o BootReceiver).
-     */
     suspend fun getAllUserReminders(): List<Reminder> {
         val uid = auth.currentUser?.uid ?: return emptyList()
         return try {
-            // Consulta em coleção de grupo ou percorrendo pets
-            // Para simplicidade, vamos buscar através da subcoleção de cada pet
             val pets = PetRepository.getDogs()
             val allReminders = mutableListOf<Reminder>()
             for (pet in pets) {

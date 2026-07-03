@@ -10,7 +10,7 @@ import java.util.Calendar
 object AlarmScheduler {
     fun scheduleRepeatingAlarm(context: Context, hour: Int, minute: Int, reminderId: String, title: String, message: String) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        
+
         // Conversão determinística de String para Int para o PendingIntent
         val requestCode = reminderId.hashCode()
 
@@ -45,5 +45,25 @@ object AlarmScheduler {
             AlarmManager.INTERVAL_DAY,
             pendingIntent
         )
+    }
+
+    /**
+     * Cancela um alarme previamente agendado para um lembrete.
+     * Deve ser chamado ao excluir ou editar (antes de reagendar) um lembrete.
+     */
+    fun cancelAlarm(context: Context, reminderId: String) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val requestCode = reminderId.hashCode()
+
+        val intent = Intent(context, NotificationReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            requestCode,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        alarmManager.cancel(pendingIntent)
+        pendingIntent.cancel()
     }
 }

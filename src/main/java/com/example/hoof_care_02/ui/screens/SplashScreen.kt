@@ -26,7 +26,7 @@ fun SplashScreen(
     val scale = remember { Animatable(0.7f) }
 
     LaunchedEffect(Unit) {
-        // Animação de fade-in e zoom suave simultaneamente
+
         alpha.animateTo(
             targetValue = 1f,
             animationSpec = tween(durationMillis = 1000)
@@ -36,7 +36,7 @@ fun SplashScreen(
             animationSpec = tween(durationMillis = 1000)
         )
         
-        delay(2000) // Aguarda mais 2 segundos antes de prosseguir
+        delay(2000)
         onTimeout()
     }
 

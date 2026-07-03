@@ -12,6 +12,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -39,6 +41,8 @@ fun RemindersScreen(
     var reminders by remember { mutableStateOf<List<Reminder>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var showDialog by remember { mutableStateOf(false) }
+    var reminderBeingEdited by remember { mutableStateOf<Reminder?>(null) }
+    var reminderPendingDelete by remember { mutableStateOf<Reminder?>(null) }
 
     val selectedPet = UserProfileData.cachorroSelecionado
 
@@ -50,7 +54,6 @@ fun RemindersScreen(
         isLoading = true
         scope.launch {
             try {
-                // Migração Firebase
                 reminders = ReminderRepository.getReminders(selectedPet.id)
             } catch (e: Exception) {
                 Toast.makeText(context, "Erro ao carregar lembretes.", Toast.LENGTH_SHORT).show()
@@ -78,7 +81,10 @@ fun RemindersScreen(
         floatingActionButton = {
             if (selectedPet != null) {
                 FloatingActionButton(
-                    onClick = { showDialog = true },
+                    onClick = {
+                        reminderBeingEdited = null
+                        showDialog = true
+                    },
                     containerColor = HoofGreenDark,
                     contentColor = Color.White
                 ) {
@@ -113,21 +119,63 @@ fun RemindersScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(reminders) { reminder ->
-                        ReminderItem(reminder)
+                    items(reminders, key = { it.id }) { reminder ->
+                        ReminderItem(
+                            reminder = reminder,
+                            onEdit = {
+                                reminderBeingEdited = reminder
+                                showDialog = true
+                            },
+                            onDelete = { reminderPendingDelete = reminder }
+                        )
                     }
                 }
             }
         }
 
         if (showDialog && selectedPet != null) {
-            AddReminderDialog(
+            ReminderFormDialog(
                 petId = selectedPet.id,
                 petName = selectedPet.name,
-                onDismiss = { showDialog = false },
-                onReminderAdded = {
+                existingReminder = reminderBeingEdited,
+                onDismiss = {
                     showDialog = false
+                    reminderBeingEdited = null
+                },
+                onReminderSaved = {
+                    showDialog = false
+                    reminderBeingEdited = null
                     refreshReminders()
+                }
+            )
+        }
+
+        val reminderToDelete = reminderPendingDelete
+        if (reminderToDelete != null) {
+            AlertDialog(
+                onDismissRequest = { reminderPendingDelete = null },
+                title = { Text("Excluir lembrete") },
+                text = { Text("Tem certeza que deseja excluir \"${reminderToDelete.getDisplayTitle()}\"?") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        scope.launch {
+                            val ok = ReminderRepository.deleteReminder(reminderToDelete.petId, reminderToDelete.id)
+                            if (ok) {
+                                AlarmScheduler.cancelAlarm(context, reminderToDelete.id)
+                                reminderPendingDelete = null
+                                refreshReminders()
+                            } else {
+                                Toast.makeText(context, "Erro ao excluir lembrete.", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }) {
+                        Text("Excluir", color = Color.Red)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { reminderPendingDelete = null }) {
+                        Text("Cancelar")
+                    }
                 }
             )
         }
@@ -135,7 +183,11 @@ fun RemindersScreen(
 }
 
 @Composable
-fun ReminderItem(reminder: Reminder) {
+fun ReminderItem(
+    reminder: Reminder,
+    onEdit: () -> Unit = {},
+    onDelete: () -> Unit = {}
+) {
     val backgroundColor = when (reminder.type) {
         "Comida" -> Color(0xFF4CAF50)
         "Passeio" -> Color(0xFFFF9800)
@@ -157,7 +209,8 @@ fun ReminderItem(reminder: Reminder) {
                     text = reminder.getDisplayTitle(),
                     color = Color.White,
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f)
                 )
                 Text(
                     text = reminder.time,
@@ -172,31 +225,50 @@ fun ReminderItem(reminder: Reminder) {
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Para: ${reminder.petName}",
-                color = Color.White.copy(alpha = 0.9f),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Para: ${reminder.petName}",
+                    color = Color.White.copy(alpha = 0.9f),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                Row {
+                    IconButton(onClick = onEdit, modifier = Modifier.size(32.dp)) {
+                        Icon(Icons.Default.Edit, contentDescription = "Editar", tint = Color.White, modifier = Modifier.size(18.dp))
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
+                    IconButton(onClick = onDelete, modifier = Modifier.size(32.dp)) {
+                        Icon(Icons.Default.Delete, contentDescription = "Excluir", tint = Color.White, modifier = Modifier.size(18.dp))
+                    }
+                }
+            }
         }
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddReminderDialog(
+fun ReminderFormDialog(
     petId: String,
     petName: String,
+    existingReminder: Reminder? = null,
     onDismiss: () -> Unit,
-    onReminderAdded: () -> Unit
+    onReminderSaved: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var selectedType by remember { mutableStateOf("Comida") }
-    var selectedTime by remember { mutableStateOf("Selecionar Horário") }
-    var timeForSave by remember { mutableStateOf("") }
+    val isEditing = existingReminder != null
+
+    var title by remember { mutableStateOf(existingReminder?.title ?: "") }
+    var description by remember { mutableStateOf(existingReminder?.description ?: "") }
+    var selectedType by remember { mutableStateOf(existingReminder?.type ?: "Comida") }
+    var selectedTime by remember { mutableStateOf(existingReminder?.time ?: "Selecionar Horário") }
+    var timeForSave by remember { mutableStateOf(existingReminder?.time ?: "") }
     var isSaving by remember { mutableStateOf(false) }
 
     val calendar = Calendar.getInstance()
@@ -213,7 +285,7 @@ fun AddReminderDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Novo Lembrete") },
+        title = { Text(if (isEditing) "Editar Lembrete" else "Novo Lembrete") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("Tipo:", fontWeight = FontWeight.Bold)
@@ -276,6 +348,7 @@ fun AddReminderDialog(
                     isSaving = true
                     scope.launch {
                         val reminder = Reminder(
+                            id = existingReminder?.id ?: "",
                             petId = petId,
                             petName = petName,
                             type = selectedType,
@@ -284,22 +357,26 @@ fun AddReminderDialog(
                             description = if (selectedType == "Outro") description else null
                         )
 
-                        val newId = ReminderRepository.saveReminder(reminder)
-                        if (newId != null) {
-                            // Agenda o alarme local (Funcionalidade do colega)
+
+                        if (isEditing) {
+                            AlarmScheduler.cancelAlarm(context, existingReminder!!.id)
+                        }
+
+                        val savedId = ReminderRepository.saveReminder(reminder)
+                        if (savedId != null) {
                             try {
                                 val h = timeForSave.substring(0, 2).toInt()
                                 val m = timeForSave.substring(3, 5).toInt()
 
                                 AlarmScheduler.scheduleRepeatingAlarm(
-                                    context, h, m, newId,
+                                    context, h, m, savedId,
                                     reminder.getDisplayTitle(),
                                     reminder.getDisplayDescription()
                                 )
                             } catch (e: Exception) {
                                 Log.e("Alarm", "Erro agendando alarme", e)
                             }
-                            onReminderAdded()
+                            onReminderSaved()
                         } else {
                             Toast.makeText(context, "Erro ao salvar lembrete.", Toast.LENGTH_SHORT).show()
                             isSaving = false
@@ -310,7 +387,7 @@ fun AddReminderDialog(
                 if (isSaving) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White, strokeWidth = 2.dp)
                 } else {
-                    Text("Adicionar")
+                    Text(if (isEditing) "Salvar" else "Adicionar")
                 }
             }
         },

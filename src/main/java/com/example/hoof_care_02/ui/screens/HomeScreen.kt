@@ -29,7 +29,8 @@ fun HomeScreen(
     onNavigateToLembretes: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToProfile: () -> Unit,
-    onNavigateToClinicas: () -> Unit
+    onNavigateToClinicas: () -> Unit,
+    onNavigateToSaude: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
     val userName = UserProfileData.nomeUsuario ?: "Usuário"
@@ -52,21 +53,34 @@ fun HomeScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
-            // Top Bar / Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        painter = painterResource(id = R.drawable.fotousuario),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(60.dp)
-                            .clip(CircleShape)
-                            .clickable { onNavigateToProfile() }
-                    )
+                    val photoUrl = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.photoUrl
+                    if (photoUrl != null) {
+                        coil.compose.AsyncImage(
+                            model = photoUrl,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(60.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFF5F5F5))
+                                .clickable { onNavigateToProfile() },
+                            contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.fotousuario),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(60.dp)
+                                .clip(CircleShape)
+                                .clickable { onNavigateToProfile() }
+                        )
+                    }
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(
                         text = "Olá, $userName!",
@@ -94,7 +108,6 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Pet Selection Button
             Button(
                 onClick = onNavigateToPets,
                 modifier = Modifier
@@ -115,19 +128,18 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Grid of Actions
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Find Vets
+
                 HomeActionButton(
                     text = "Encontre\nClínicas veterinárias próximas de você",
                     modifier = Modifier.weight(1f).height(130.dp),
                     onClick = onNavigateToClinicas
                 )
 
-                // Reminders
+
                 HomeActionCard(
                     text = "Lembretes",
                     iconRes = R.drawable.imgalimentacao,
@@ -142,24 +154,20 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Health
+
                 HomeActionCard(
                     text = "Saúde",
                     iconRes = R.drawable.imgsaude,
                     modifier = Modifier.weight(1f).height(130.dp),
                     onClick = {
                         if (selectedPet != null) {
-                            // Poderia navegar para uma rota específica de saúde
-                            Toast.makeText(context, "Saúde disponível na lista de Pets.", Toast.LENGTH_SHORT).show()
+                            onNavigateToSaude(selectedPet.id)
                         } else {
                             Toast.makeText(context, "Selecione um pet primeiro.", Toast.LENGTH_SHORT).show()
                         }
                     }
                 )
-                
-                // Placeholder to maintain layout if needed, or just let the Row be uneven.
-                // Alternatively, I can expand the "Saúde" card to fill the row if desired, 
-                // but keeping it as weight(1f) in a Row with 12dp spacing is safer for now.
+
                 Spacer(modifier = Modifier.weight(1f))
             }
         }
