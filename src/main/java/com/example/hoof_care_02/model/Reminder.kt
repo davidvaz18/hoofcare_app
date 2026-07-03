@@ -11,9 +11,7 @@ data class Reminder(
     val title: String? = null,
     val description: String? = null
 ) {
-    /**
-     * Retorna o título formatado para exibição, similar ao 'titulo_display' do Django.
-     */
+
     fun getDisplayTitle(): String {
         return if (type == "Outro" && !title.isNullOrBlank()) {
             title
@@ -22,9 +20,6 @@ data class Reminder(
         }
     }
 
-    /**
-     * Retorna a descrição formatada para exibição, similar ao 'descricao_display' do Django.
-     */
     fun getDisplayDescription(): String {
         return if (type == "Outro" && !description.isNullOrBlank()) {
             description

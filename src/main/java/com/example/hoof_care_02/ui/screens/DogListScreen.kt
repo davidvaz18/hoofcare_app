@@ -32,11 +32,12 @@ fun DogListScreen(
     val scope = rememberCoroutineScope()
     var dogList by remember { mutableStateOf<List<Dog>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
+    var dogPendingDelete by remember { mutableStateOf<Dog?>(null) }
+    var isDeleting by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
+    fun loadDogs() {
         scope.launch {
             try {
-                // Migração Firebase: Carregando do repositório
                 dogList = PetRepository.getDogs()
             } catch (e: Exception) {
                 Toast.makeText(context, "Erro ao carregar pets.", Toast.LENGTH_SHORT).show()
@@ -46,9 +47,13 @@ fun DogListScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        isLoading = true
+        loadDogs()
+    }
+
     Scaffold(
         floatingActionButton = {
-            // Regra de negócio do colega: Máximo de 3 pets
             if (dogList.size < 3) {
                 FloatingActionButton(
                     onClick = onNavigateToAddPet,
@@ -60,7 +65,6 @@ fun DogListScreen(
             }
         },
         bottomBar = {
-            // Componente centralizado no CommonUI
             AppBottomNavigationBar(
                 onHomeClick = onNavigateHome,
                 onPetsClick = { /* Já estamos aqui */ },
@@ -74,15 +78,33 @@ fun DogListScreen(
                 .padding(paddingValues)
                 .background(Color.White)
         ) {
-            // Componente centralizado no CommonUI
             HeaderSection(
                 userName = UserProfileData.nomeUsuario ?: "Usuário",
                 onProfileClick = onNavigateToUserProfile
             )
 
+            if (!isLoading && dogList.size >= 3) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3E0))
+                ) {
+                    Text(
+                        text = "Você atingiu o limite de 3 pets cadastrados. Exclua um pet (ícone de lixeira no card) para poder adicionar outro.",
+                        modifier = Modifier.padding(12.dp),
+                        color = Color(0xFF8A5A00)
+                    )
+                }
+            }
+
             if (isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = HoofGreenDark)
+                }
+            } else if (dogList.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Nenhum pet cadastrado ainda.", color = Color.Gray)
                 }
             } else {
                 LazyColumn(
@@ -90,8 +112,7 @@ fun DogListScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    items(dogList) { dog ->
-                        // Componente centralizado no CommonUI
+                    items(dogList, key = { it.id }) { dog ->
                         DogCard(
                             dog = dog,
                             onVerPerfil = { onNavigateToPetProfile(dog.id) },
@@ -99,11 +120,55 @@ fun DogListScreen(
                                 UserProfileData.cachorroSelecionado = dog
                                 Toast.makeText(context, "${dog.name} selecionado!", Toast.LENGTH_SHORT).show()
                                 onNavigateHome()
-                            }
+                            },
+                            onExcluir = { dogPendingDelete = dog }
                         )
                     }
                 }
             }
+        }
+
+        val dogToDelete = dogPendingDelete
+        if (dogToDelete != null) {
+            AlertDialog(
+                onDismissRequest = { if (!isDeleting) dogPendingDelete = null },
+                title = { Text("Excluir pet") },
+                text = { Text("Tem certeza que deseja excluir ${dogToDelete.name}? Essa ação não pode ser desfeita.") },
+                confirmButton = {
+                    TextButton(
+                        enabled = !isDeleting,
+                        onClick = {
+                            isDeleting = true
+                            scope.launch {
+                                val result = PetRepository.deleteDog(dogToDelete.id)
+                                if (result.isSuccess) {
+                                    if (UserProfileData.cachorroSelecionado?.id == dogToDelete.id) {
+                                        UserProfileData.cachorroSelecionado = null
+                                    }
+                                    Toast.makeText(context, "${dogToDelete.name} excluído.", Toast.LENGTH_SHORT).show()
+                                    dogPendingDelete = null
+                                    isDeleting = false
+                                    loadDogs()
+                                } else {
+                                    Toast.makeText(context, "Erro ao excluir: ${result.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
+                                    isDeleting = false
+                                }
+                            }
+                        }
+                    ) {
+                        if (isDeleting) {
+                            CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                        } else {
+                            Text("Excluir", color = Color.Red)
+                        }
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { dogPendingDelete = null }, enabled = !isDeleting) {
+                        Text("Cancelar")
+                    }
+                }
+            )
         }
     }
 }

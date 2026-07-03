@@ -36,9 +36,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import kotlinx.coroutines.launch
 
-/**
- * Tela de Cadastro migrada para Firebase Auth.
- */
+
 @Composable
 fun SignInScreen(
     onSignUpSuccess: () -> Unit

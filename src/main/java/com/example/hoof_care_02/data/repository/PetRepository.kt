@@ -1,6 +1,9 @@
 package com.example.hoof_care_02.data.repository
 
 import com.example.hoof_care_02.model.*
+import com.example.hoof_care_02.ui.screens.Alergia
+import com.example.hoof_care_02.ui.screens.Vacina
+import com.example.hoof_care_02.ui.screens.VetProcedimento
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
@@ -35,9 +38,9 @@ object PetRepository {
     }
 
     suspend fun saveDog(dog: Dog): Result<Unit> {
-        val collection = petsCollection 
+        val collection = petsCollection
             ?: return Result.failure(Exception("Usuário não autenticado."))
-        
+
         return try {
             if (dog.id.isEmpty()) {
                 val docRef = collection.document()
@@ -52,7 +55,17 @@ object PetRepository {
         }
     }
 
-    // --- Métodos de Saúde (Firebase) ---
+    suspend fun deleteDog(petId: String): Result<Unit> {
+        val collection = petsCollection
+            ?: return Result.failure(Exception("Usuário não autenticado."))
+
+        return try {
+            collection.document(petId).delete().await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
     suspend fun getVacinas(petId: String): List<Vacina> {
         val collection = petsCollection?.document(petId)?.collection("vacinas") ?: return emptyList()

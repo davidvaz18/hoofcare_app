@@ -26,10 +26,7 @@ import com.example.hoof_care_02.ui.theme.HoofDivider
 import com.example.hoof_care_02.ui.theme.HoofFieldBorder
 import com.example.hoof_care_02.ui.theme.HoofWhite
 
-/**
- * Campo de texto com cantos arredondados, equivalente ao drawable/rounded_corner.xml
- * usado nos EditText originais das telas de Login e Cadastro.
- */
+
 @Composable
 fun RoundedAuthTextField(
     value: String,
@@ -62,7 +59,7 @@ fun RoundedAuthTextField(
     )
 }
 
-/** Botão preto "Continue" / "Continuar", igual aos botões com backgroundTint #000000. */
+
 @Composable
 fun PrimaryAuthButton(
     text: String,
@@ -86,7 +83,7 @@ fun PrimaryAuthButton(
     }
 }
 
-/** Divisor "Ou" entre os botões de login social, igual ao LinearLayout com duas Views + TextView. */
+
 @Composable
 fun OrDivider(modifier: Modifier = Modifier) {
     Row(
@@ -115,7 +112,6 @@ fun OrDivider(modifier: Modifier = Modifier) {
     }
 }
 
-/** Botão social branco com ícone à esquerda (Google / Facebook). */
 @Composable
 fun SocialAuthButton(
     text: String,

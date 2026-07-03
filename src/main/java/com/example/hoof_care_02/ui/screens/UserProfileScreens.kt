@@ -39,12 +39,12 @@ fun ProfileStepLayout(
             .background(Color.White)
             .statusBarsPadding()
     ) {
-        // Back Button
+
         IconButton(onClick = onBack, modifier = Modifier.size(60.dp)) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
         }
 
-        // Progress Bar
+
         LinearProgressIndicator(
             progress = { (step / 4f) },
             modifier = Modifier

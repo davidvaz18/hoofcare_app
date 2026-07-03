@@ -6,6 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -79,14 +81,28 @@ fun HeaderSection(userName: String, onProfileClick: () -> Unit = {}) {
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painterResource(id = R.drawable.fotousuario),
-                contentDescription = "Perfil",
-                modifier = Modifier
-                    .size(60.dp)
-                    .clip(CircleShape)
-                    .clickable { onProfileClick() }
-            )
+            val photoUrl = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.photoUrl
+            if (photoUrl != null) {
+                AsyncImage(
+                    model = photoUrl,
+                    contentDescription = "Perfil",
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFF5F5F5))
+                        .clickable { onProfileClick() },
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.fotousuario),
+                    contentDescription = "Perfil",
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clip(CircleShape)
+                        .clickable { onProfileClick() }
+                )
+            }
             Spacer(modifier = Modifier.width(16.dp))
             Text(text = "Olá, $userName!", fontSize = 18.sp, fontWeight = FontWeight.Medium)
         }
@@ -99,7 +115,8 @@ fun HeaderSection(userName: String, onProfileClick: () -> Unit = {}) {
 fun DogCard(
     dog: Dog,
     onVerPerfil: () -> Unit,
-    onSelecionar: () -> Unit
+    onSelecionar: () -> Unit,
+    onExcluir: (() -> Unit)? = null
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -119,7 +136,7 @@ fun DogCard(
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = dog.name,
                         color = Color.White,
@@ -128,6 +145,20 @@ fun DogCard(
                     )
                     Text(text = dog.breed.name, color = Color.White, fontSize = 16.sp)
                     Text(text = "${dog.age} anos", color = Color.White, fontSize = 14.sp)
+                }
+
+                if (onExcluir != null) {
+                    IconButton(
+                        onClick = onExcluir,
+                        modifier = Modifier
+                            .background(Color.White.copy(alpha = 0.25f), CircleShape)
+                    ) {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = "Excluir Pet",
+                            tint = Color.White
+                        )
+                    }
                 }
             }
 

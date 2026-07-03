@@ -25,15 +25,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hoof_care_02.model.Dog
+import kotlinx.coroutines.launch
 
-// Cores usadas nesta tela, seguindo o mesmo padrão de marca do resto do app
 private val HealthGreenDark = Color(0xFF2FAE55)
 private val HealthGreenGradientEnd = Color(0xFF3FBE66)
 private val HealthBg = Color(0xFFF5F6F7)
 private val HealthCardBorder = Color(0xFFE7E9EC)
 private val HealthTextMuted = Color(0xFF8A8F98)
 
-// ---------- Modelos de dados exibidos na tela ----------
 
 private const val NAO_INFORMADO = "Não informado"
 
@@ -45,7 +44,7 @@ data class VetProcedimento(
 
 data class Alergia(
     val nome: String,
-    val severidade: String, // "Moderada" | "Grave" | "Leve"
+    val severidade: String,
     val cor: Color
 )
 
@@ -68,9 +67,7 @@ data class PetHealthInfo(
     val veterinarioClinica: String
 )
 
-/**
- * Converte o Dog (model já usado no app) para os dados exibidos nesta tela.
- */
+
 fun Dog.toPetHealthInfo(): PetHealthInfo {
     val sexoExibido = when (sex) {
         "M" -> "Macho"
@@ -111,7 +108,7 @@ fun Dog.toPetHealthInfo(): PetHealthInfo {
     )
 }
 
-/** Converte "yyyy-MM-dd" para "dd/MM/yyyy". */
+
 private fun formatarDataIsoParaBr(dataIso: String): String {
     val partes = dataIso.split("-")
     return if (partes.size == 3) {
@@ -121,7 +118,6 @@ private fun formatarDataIsoParaBr(dataIso: String): String {
     }
 }
 
-// ---------- Modelos de dados da aba Vacinação ----------
 
 data class Vacina(
     val nome: String,
@@ -143,9 +139,53 @@ private fun exemploVacinas() = listOf(
     Vacina("Giardia", "30/11/2023", StatusVacina.ATRASADA)
 )
 
-/**
- * Tela de Saúde do pet.
- */
+
+@Composable
+fun PetHealthScreenRoute(
+    petId: String,
+    onBack: () -> Unit = {},
+    onEditarFicha: () -> Unit = {},
+    onHomeClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {}
+) {
+    val scope = rememberCoroutineScope()
+    var dog by remember { mutableStateOf<Dog?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(petId) {
+        scope.launch {
+            try {
+                dog = com.example.hoof_care_02.data.repository.PetRepository.getDogById(petId)
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    when {
+        isLoading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = HealthGreenDark)
+            }
+        }
+        dog == null -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Pet não encontrado.", color = HealthTextMuted)
+            }
+        }
+        else -> {
+            PetHealthScreen(
+                dog = dog!!,
+                onBack = onBack,
+                onEditarFicha = onEditarFicha,
+                onHomeClick = onHomeClick,
+                onProfileClick = onProfileClick
+            )
+        }
+    }
+}
+
+
 @Composable
 fun PetHealthScreen(
     dog: Dog,

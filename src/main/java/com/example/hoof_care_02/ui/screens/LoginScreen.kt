@@ -35,9 +35,6 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import kotlinx.coroutines.launch
 
-/**
- * Tela de Login migrada para Firebase Auth.
- */
 @Composable
 fun LoginScreen(
     onLoginSuccess: () -> Unit,

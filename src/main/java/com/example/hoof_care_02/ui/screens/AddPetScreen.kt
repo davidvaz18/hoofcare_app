@@ -39,6 +39,32 @@ private val FIXED_BREEDS = listOf(
     Breed("10", "Vira-lata")
 )
 
+/**
+ * Calcula a idade em anos completos a partir de uma data de nascimento
+ * no formato "yyyy-MM-dd". Retorna 0 se a data for inválida/nula ou no futuro.
+ */
+fun calcularIdadeAPartirDoNascimento(birthday: String?): Int {
+    if (birthday.isNullOrBlank()) return 0
+    return try {
+        val parts = birthday.split("-")
+        val birthYear = parts[0].toInt()
+        val birthMonth = parts[1].toInt()
+        val birthDay = parts[2].toInt()
+
+        val today = Calendar.getInstance()
+        var age = today.get(Calendar.YEAR) - birthYear
+        val todayMonth = today.get(Calendar.MONTH) + 1
+        val todayDay = today.get(Calendar.DAY_OF_MONTH)
+
+        if (todayMonth < birthMonth || (todayMonth == birthMonth && todayDay < birthDay)) {
+            age--
+        }
+        if (age < 0) 0 else age
+    } catch (e: Exception) {
+        0
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPetScreen(
@@ -59,7 +85,6 @@ fun AddPetScreen(
     var sexExpanded by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
 
-    // Tenta encontrar a raça automaticamente se o usuário digitar o nome exato
     LaunchedEffect(selectedBreedName) {
         if (selectedBreed?.name != selectedBreedName) {
             val match = FIXED_BREEDS.firstOrNull { it.name.equals(selectedBreedName, ignoreCase = true) }
@@ -115,7 +140,7 @@ fun AddPetScreen(
                 enabled = !isLoading
             )
 
-            // Campo de raça pesquisável (UI do colega integrada ao PetRepository)
+
             ExposedDropdownMenuBox(
                 expanded = breedsExpanded,
                 onExpandedChange = { if (!isLoading) breedsExpanded = it },
@@ -123,9 +148,9 @@ fun AddPetScreen(
             ) {
                 OutlinedTextField(
                     value = selectedBreedName,
-                    onValueChange = { 
+                    onValueChange = {
                         selectedBreedName = it
-                        selectedBreed = null 
+                        selectedBreed = null
                     },
                     label = { Text("Raça") },
                     placeholder = { Text("Digite para buscar...") },
@@ -138,8 +163,8 @@ fun AddPetScreen(
                     )
                 )
 
-                val filteredBreeds = FIXED_BREEDS.filter { 
-                    it.name.contains(selectedBreedName, ignoreCase = true) 
+                val filteredBreeds = FIXED_BREEDS.filter {
+                    it.name.contains(selectedBreedName, ignoreCase = true)
                 }
 
                 if (filteredBreeds.isNotEmpty()) {
@@ -161,7 +186,7 @@ fun AddPetScreen(
                 }
             }
 
-            // Feedback de validação da raça
+
             if (selectedBreedName.isNotBlank()) {
                 Text(
                     text = if (selectedBreed != null) "✓ Raça reconhecida" else "Escolha uma raça da lista",
@@ -171,7 +196,7 @@ fun AddPetScreen(
                 )
             }
 
-            // Gênero
+
             Box(modifier = Modifier.fillMaxWidth()) {
                 val sexDisplay = when(sex) {
                     "M" -> "Macho"
@@ -209,6 +234,16 @@ fun AddPetScreen(
                 Text(birthdayDisplay)
             }
 
+            if (birthdayApi != null) {
+                val idadeCalculada = calcularIdadeAPartirDoNascimento(birthdayApi)
+                Text(
+                    text = "Idade calculada: $idadeCalculada ${if (idadeCalculada == 1) "ano" else "anos"}",
+                    color = HoofGreenDark,
+                    fontSize = 12.sp,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
             OutlinedTextField(
                 value = weight,
                 onValueChange = { weight = it },
@@ -227,6 +262,7 @@ fun AddPetScreen(
                         if (name.isBlank()) missingFields.add("Nome")
                         if (selectedBreed == null) missingFields.add("Raça")
                         if (sex == null) missingFields.add("Gênero")
+                        if (birthdayApi == null) missingFields.add("Data de Nascimento")
 
                         if (missingFields.isNotEmpty()) {
                             Toast.makeText(context, "Faltando: ${missingFields.joinToString(", ")}", Toast.LENGTH_LONG).show()
@@ -235,9 +271,9 @@ fun AddPetScreen(
                             scope.launch {
                                 try {
                                     val dog = Dog(
-                                        id = "", // Firestore gera automático
+                                        id = "",
                                         name = name,
-                                        age = 0,
+                                        age = calcularIdadeAPartirDoNascimento(birthdayApi),
                                         sex = sex!!,
                                         photo = null,
                                         birthday = birthdayApi,

@@ -12,7 +12,7 @@ class NotificationReceiver : BroadcastReceiver() {
         val message = intent.getStringExtra("REMINDER_MESSAGE") ?: "Está na hora da atividade!"
         val reminderId = intent.getStringExtra("REMINDER_ID") ?: ""
         
-        // Usamos o hash determinístico da String para o ID da notificação
+
         val notificationId = reminderId.hashCode()
 
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

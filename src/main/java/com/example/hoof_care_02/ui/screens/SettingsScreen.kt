@@ -54,7 +54,7 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 32.dp)
         ) {
-            // Section: PREFERÊNCIAS
+
             SettingsSectionTitle("PREFERÊNCIAS")
             SettingsCard {
                 SettingsSwitchItem(
@@ -73,7 +73,7 @@ fun SettingsScreen(
                 )
             }
 
-            // Section: CONTA
+
             SettingsSectionTitle("CONTA")
             SettingsCard {
                 SettingsClickableItem(
@@ -86,7 +86,7 @@ fun SettingsScreen(
                 )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = Color(0xFFE0E0E0))
                 
-                // Botão de Sair migrado para Firebase
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -103,7 +103,7 @@ fun SettingsScreen(
                 }
             }
 
-            // Section: SOBRE
+
             SettingsSectionTitle("SOBRE")
             SettingsCard {
                 SettingsClickableItem(
@@ -123,7 +123,7 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Footer
+
             val uid = AuthRepository.getUid() ?: "Não autenticado"
             Text(
                 text = "ID do Usuário: $uid",

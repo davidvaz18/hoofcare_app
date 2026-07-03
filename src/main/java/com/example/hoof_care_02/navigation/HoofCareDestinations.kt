@@ -1,8 +1,6 @@
 package com.example.hoof_care_02.navigation
 
-/**
- * Rotas centralizadas de navegação do app (Navigation Compose).
- */
+
 object HoofCareDestinations {
     const val SPLASH = "splash"
     const val LOGIN = "login"
@@ -17,7 +15,7 @@ object HoofCareDestinations {
     const val CLINICAS = "clinicas"
     const val USER_PROFILE = "user_profile"
 
-    // Fluxo de Cadastro de Perfil/Onboarding
+    // Fluxo de Cadastro de Perfil
     const val USER_PROFILE_01 = "user_profile_01"
     const val USER_PROFILE_02 = "user_profile_02"
     const val USER_PROFILE_03 = "user_profile_03"

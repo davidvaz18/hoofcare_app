@@ -13,9 +13,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.hoof_care_02.ui.screens.*
 
-/**
- * NavHost único do app.
- */
 @Composable
 fun HoofCareNavHost(
     navController: NavHostController = rememberNavController(),
@@ -54,7 +51,6 @@ fun HoofCareNavHost(
         composable(HoofCareDestinations.SIGN_IN) {
             SignInScreen(
                 onSignUpSuccess = {
-                    // Após o primeiro cadastro, vai para as perguntas de onboarding
                     navController.navigate(HoofCareDestinations.USER_PROFILE_01)
                 }
             )
@@ -72,11 +68,13 @@ fun HoofCareNavHost(
                     navController.navigate(HoofCareDestinations.CONFIGURACOES)
                 },
                 onNavigateToProfile = {
-                    // CORREÇÃO: Agora aponta para a tela de Perfil real, não para o onboarding
                     navController.navigate(HoofCareDestinations.USER_PROFILE)
                 },
                 onNavigateToClinicas = {
                     navController.navigate(HoofCareDestinations.CLINICAS)
+                },
+                onNavigateToSaude = { petId ->
+                    navController.navigate(HoofCareDestinations.saudePetRoute(petId))
                 }
             )
         }
@@ -85,7 +83,6 @@ fun HoofCareNavHost(
             UserProfileScreen(
                 onBack = { navController.popBackStack() },
                 onLogout = {
-                    // Lógica de logout básica
                     navController.navigate(HoofCareDestinations.LOGIN) {
                         popUpTo(0) { inclusive = true }
                     }
@@ -137,7 +134,29 @@ fun HoofCareNavHost(
             val petId = backStackEntry.arguments?.getString("petId") ?: ""
             PetProfileScreen(
                 petId = petId,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onNavigateToHealth = {
+                    navController.navigate(HoofCareDestinations.saudePetRoute(petId))
+                }
+            )
+        }
+
+        composable(
+            route = HoofCareDestinations.SAUDE_PET,
+            arguments = listOf(navArgument("petId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val petId = backStackEntry.arguments?.getString("petId") ?: ""
+            PetHealthScreenRoute(
+                petId = petId,
+                onBack = { navController.popBackStack() },
+                onHomeClick = {
+                    navController.navigate(HoofCareDestinations.PAGINA_HOME) {
+                        popUpTo(HoofCareDestinations.PAGINA_HOME) { inclusive = true }
+                    }
+                },
+                onProfileClick = {
+                    navController.navigate(HoofCareDestinations.USER_PROFILE)
+                }
             )
         }
 
@@ -153,7 +172,6 @@ fun HoofCareNavHost(
             )
         }
 
-        // --- FLUXO DE ONBOARDING (PERGUNTAS INICIAIS) ---
         composable(HoofCareDestinations.USER_PROFILE_01) {
             UserProfileScreen01(
                 onNext = { navController.navigate(HoofCareDestinations.USER_PROFILE_02) },
