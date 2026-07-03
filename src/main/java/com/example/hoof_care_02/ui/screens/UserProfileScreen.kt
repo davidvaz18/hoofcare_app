@@ -106,7 +106,7 @@ fun UserProfileScreen(
                 if (photoUrl != null) {
                     AsyncImage(
                         model = photoUrl,
-                        contentDescription = null,
+                        contentDescription = "Foto do usuário",
                         modifier = Modifier
                             .size(120.dp)
                             .clip(CircleShape)
@@ -116,7 +116,7 @@ fun UserProfileScreen(
                 } else {
                     Image(
                         painter = painterResource(id = R.drawable.fotousuario),
-                        contentDescription = null,
+                        contentDescription = "Foto do usuário",
                         modifier = Modifier
                             .size(120.dp)
                             .clip(CircleShape)
@@ -133,7 +133,7 @@ fun UserProfileScreen(
                     if (isUploadingPhoto) {
                         CircularProgressIndicator(modifier = Modifier.size(16.dp), color = Color.White, strokeWidth = 2.dp)
                     } else {
-                        Icon(Icons.Default.Edit, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
+                        Icon(Icons.Default.Edit, contentDescription = "Editar foto", tint = Color.White, modifier = Modifier.size(18.dp))
                     }
                 }
             }

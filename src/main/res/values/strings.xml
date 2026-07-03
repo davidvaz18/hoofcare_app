@@ -1,4 +1,289 @@
 <resources>
-    <string name="app_name">Hoof_Care_02</string>
-    <string name="card_do_cachorro">Card do cachorro</string>
+    <string name="app_name">HoofCare</string>
+
+    <!-- Auth -->
+    <string name="auth_login_title">Entre com a sua conta\n Digite seu email para se entrar nesse app.</string>
+    <string name="auth_email_placeholder">email@exemplo.com</string>
+    <string name="auth_password_placeholder">Senha</string>
+    <string name="auth_confirm_password_placeholder">Confirmar Senha</string>
+    <string name="auth_name_placeholder">Nome</string>
+    <string name="auth_login_button">Continue</string>
+    <string name="auth_signup_button">Continuar</string>
+    <string name="auth_no_account">Não possui uma conta?</string>
+    <string name="auth_terms">Ao clicar em continuar, você concorda com nossos Termos de Serviço e Política de Privacidade.</string>
+    <string name="auth_signup_title">Crie sua conta\n Digite seu email para se cadastrar nesse app.</string>
+    <string name="auth_signup_success">Cadastro realizado com sucesso!</string>
+    <string name="auth_login_success">Login realizado com sucesso!</string>
+    <string name="auth_user_not_found">Usuário não encontrado.</string>
+    <string name="auth_wrong_credentials">E-mail ou senha incorretos.</string>
+    <string name="auth_login_error">Erro ao fazer login: %s</string>
+    <string name="auth_weak_password">A senha é muito fraca.</string>
+    <string name="auth_invalid_email">E-mail inválido.</string>
+    <string name="auth_email_in_use">Este e-mail já está em uso.</string>
+    <string name="auth_signup_error">Erro ao cadastrar: %s</string>
+    <string name="auth_password_mismatch">As senhas não coincidem</string>
+    <string name="auth_or_divider">Ou</string>
+    <string name="auth_error_email_required">E-mail é obrigatório</string>
+    <string name="auth_error_invalid_email">E-mail inválido</string>
+    <string name="auth_error_password_required">Senha é obrigatória</string>
+    <string name="auth_error_name_required">Nome é obrigatório</string>
+    <string name="auth_error_confirm_password_required">Confirmação é obrigatória</string>
+    <string name="auth_logo_description">Logo HoofCare</string>
+
+    <!-- Navigation / Bottom Bar -->
+    <string name="nav_home">Home</string>
+    <string name="nav_health">Saúde</string>
+    <string name="nav_pets">Pets</string>
+    <string name="nav_profile">Perfil</string>
+
+    <!-- Common / General -->
+    <string name="common_save">Salvar</string>
+    <string name="common_cancel">Cancelar</string>
+    <string name="common_delete">Excluir</string>
+    <string name="common_edit">Editar</string>
+    <string name="common_back">Voltar</string>
+    <string name="common_hello">Olá, %s!</string>
+    <string name="common_years">%d anos</string>
+    <string name="common_year_1">1 ano</string>
+    <string name="common_weight_kg">%s kg</string>
+    <string name="common_not_informed">Não informado</string>
+    <string name="common_username_fallback">Usuário</string>
+    <string name="common_male">Macho</string>
+    <string name="common_female">Fêmea</string>
+    <string name="common_select">Selecionar</string>
+    <string name="common_error">Erro</string>
+
+    <!-- Home -->
+    <string name="home_title">De quem falamos hoje?</string>
+    <string name="home_select_pet">Selecione um Pet</string>
+    <string name="home_clinics_card">Encontre\nClínicas veterinárias próximas de você</string>
+    <string name="home_reminders_card">Lembretes</string>
+    <string name="home_health_card">Saúde</string>
+    <string name="home_select_pet_first">Selecione um pet primeiro.</string>
+    <string name="home_user_photo">Foto do usuário</string>
+    <string name="home_settings">Configurações</string>
+
+    <!-- Dog List -->
+    <string name="doglist_add_pet">Adicionar Pet</string>
+    <string name="doglist_limit_reached">Você atingiu o limite de 3 pets cadastrados. Exclua um pet (ícone de lixeira no card) para poder adicionar outro.</string>
+    <string name="doglist_empty">Nenhum pet cadastrado ainda.</string>
+    <string name="doglist_selected">%s selecionado!</string>
+    <string name="doglist_delete_title">Excluir pet</string>
+    <string name="doglist_delete_confirm">Tem certeza que deseja excluir %s? Essa ação não pode ser desfeita.</string>
+    <string name="doglist_deleted">%s excluído.</string>
+    <string name="doglist_delete_error">Erro ao excluir: %s</string>
+    <string name="doglist_load_error">Erro ao carregar pets.</string>
+    <string name="doglist_card_tag">Card do cachorro</string>
+
+    <!-- Pet Profile -->
+    <string name="petprofile_title">Perfil do Pet</string>
+    <string name="petprofile_not_found">Pet não encontrado.</string>
+    <string name="petprofile_load_error">Erro ao carregar detalhes.</string>
+    <string name="petprofile_saved">Alterações salvas.</string>
+    <string name="petprofile_save_error">Erro ao salvar alterações.</string>
+    <string name="petprofile_not_authenticated">Usuário não autenticado.</string>
+    <string name="petprofile_photo_updated">Foto atualizada.</string>
+    <string name="petprofile_photo_error">Erro ao salvar foto.</string>
+    <string name="petprofile_photo_upload_error">Erro ao enviar foto: %s</string>
+    <string name="petprofile_edit_photo">Editar foto</string>
+    <string name="petprofile_gender">Gênero</string>
+    <string name="petprofile_age">Idade</string>
+    <string name="petprofile_weight">Peso</string>
+    <string name="petprofile_birthday">Aniversário</string>
+    <string name="petprofile_view_health">Abrir ficha de saúde</string>
+    <string name="petprofile_health_button">Ver Ficha de Saúde</string>
+    <string name="petprofile_edit_name">Editar nome</string>
+    <string name="petprofile_name_label">Nome</string>
+    <string name="petprofile_edit_weight">Editar peso</string>
+    <string name="petprofile_weight_label">Peso (kg)</string>
+    <string name="petprofile_invalid_weight">Peso inválido.</string>
+    <string name="petprofile_edit_breed">Editar raça</string>
+    <string name="petprofile_breed_label">Raça</string>
+    <string name="petprofile_breed_recognized">✓ Raça reconhecida</string>
+    <string name="petprofile_edit_gender">Editar gênero</string>
+    <string name="petprofile_birthday_format">%04d-%02d-%02d</string>
+    <string name="petprofile_birthday_display">dd \'de\' MMMM \'de\' yyyy</string>
+    <string name="petprofile_birthday_not_informed">Não informado</string>
+
+    <!-- Pet Health -->
+    <string name="health_pet_not_found">Pet não encontrado.</string>
+    <string name="health_dial_error">Não foi possível abrir o discador.</string>
+    <string name="health_no_phone">Nenhum telefone cadastrado.</string>
+    <string name="health_separator"> · </string>
+    <string name="health_born_in">Nascido em </string>
+    <string name="health_record">Prontuário</string>
+    <string name="health_medical_record">Ficha Médica</string>
+    <string name="health_vaccination">Vacinação</string>
+    <string name="health_pet_info">Informações do pet</string>
+    <string name="health_edit_record">Editar ficha</string>
+    <string name="health_weight">Peso</string>
+    <string name="health_size">Porte</string>
+    <string name="health_blood_type">Tipo sang.</string>
+    <string name="health_general_info">Informações Gerais</string>
+    <string name="health_breed">Raça</string>
+    <string name="health_fur">Pelagem</string>
+    <string name="health_neutered">Castrado</string>
+    <string name="health_free_description">Descrição Livre</string>
+    <string name="health_vet_title">Veterinário de Confiança</string>
+    <string name="health_call">Ligar</string>
+    <string name="health_vaccine_up_to_date">Em dia</string>
+    <string name="health_vaccine_expiring">Vencendo</string>
+    <string name="health_vaccine_late">Atrasada</string>
+    <string name="health_vaccine_late_1">1 vacina atrasada. Agende uma consulta!</string>
+    <string name="health_vaccine_late_count">%d vacinas atrasadas. Agende uma consulta!</string>
+    <string name="health_vaccine_empty">Nenhuma vacina registrada ainda.</string>
+    <string name="health_register_vaccine">Registrar nova vacina</string>
+    <string name="health_vaccine_save_error">Erro ao salvar vacina: %s</string>
+    <string name="health_vaccine_delete_title">Excluir vacina</string>
+    <string name="health_vaccine_delete_confirm">Tem certeza que deseja excluir \"%s\"?</string>
+    <string name="health_vaccine_delete_error">Erro ao excluir vacina.</string>
+    <string name="health_vaccine_date_format">%02d/%02d/%04d</string>
+    <string name="health_vaccine_edit_title">Editar Vacina</string>
+    <string name="health_vaccine_register_title">Registrar Vacina</string>
+    <string name="health_vaccine_name_label">Nome da vacina</string>
+    <string name="health_vaccine_date_label">Data de aplicação</string>
+    <string name="health_vaccine_status_label">Status</string>
+    <string name="health_vaccine_validation">Preencha nome e data.</string>
+    <string name="health_vaccine_applied_on">Aplicada em %s</string>
+    <string name="health_vaccine_details">Detalhes</string>
+
+    <!-- Edit Pet Health -->
+    <string name="edithealth_title">Editar Ficha Médica</string>
+    <string name="edithealth_section">Informações de Saúde</string>
+    <string name="edithealth_weight_label">Peso (kg)</string>
+    <string name="edithealth_size_label">Porte (Ex: Pequeno, Médio, Grande)</string>
+    <string name="edithealth_blood_label">Tipo Sanguíneo</string>
+    <string name="edithealth_fur_label">Pelagem (Ex: Curta, Longa, Marrom)</string>
+    <string name="edithealth_neutered_label">Castrado</string>
+    <string name="edithealth_select_option">Selecionar opção</string>
+    <string name="edithealth_yes">Sim</string>
+    <string name="edithealth_no">Não</string>
+    <string name="edithealth_vet_section">Veterinário</string>
+    <string name="edithealth_vet_name_label">Nome do Veterinário</string>
+    <string name="edithealth_clinic_label">Clínica / Hospital</string>
+    <string name="edithealth_vet_phone_label">Telefone do Veterinário</string>
+    <string name="edithealth_success">Ficha atualizada!</string>
+    <string name="edithealth_save_error">Erro ao salvar: %s</string>
+    <string name="edithealth_save_button">Salvar Alterações</string>
+    <string name="edithealth_observations_label">Descrição Livre / Observações</string>
+
+    <!-- Clinics -->
+    <string name="clinics_permission_denied">Permissão de localização negada.</string>
+    <string name="clinics_title">Clínicas Veterinárias</string>
+    <string name="clinics_location">Localização</string>
+    <string name="clinics_subtitle">Encontre ajuda profissional</string>
+    <string name="clinics_description">Clique no botão abaixo para encontrar as clínicas veterinárias mais próximas de você no Google Maps.</string>
+    <string name="clinics_search_button">Buscar Clínicas Próximas</string>
+    <string name="clinics_manage_permissions">Gerenciar Permissões</string>
+    <string name="clinics_gps_error">Não foi possível obter sua localização. Verifique o GPS.</string>
+    <string name="clinics_location_error">Erro ao obter localização: %s</string>
+    <string name="clinics_geo_uri">geo:%s,%s?q=clínicas veterinárias</string>
+    <string name="clinics_maps_url">https://www.google.com/maps/search/clínicas+veterinárias/@%s,%s,15z</string>
+
+    <!-- Reminders -->
+    <string name="reminders_title">Lembretes</string>
+    <string name="reminders_title_with_pet">Lembretes - %s</string>
+    <string name="reminders_load_error">Erro ao carregar lembretes.</string>
+    <string name="reminders_select_pet_first">Selecione um pet na Home primeiro.</string>
+    <string name="reminders_empty">Nenhum lembrete encontrado.</string>
+    <string name="reminders_add">Adicionar Lembrete</string>
+    <string name="reminders_delete_title">Excluir lembrete</string>
+    <string name="reminders_delete_confirm">Tem certeza que deseja excluir \"%s\"?</string>
+    <string name="reminders_delete_error">Erro ao excluir lembrete.</string>
+    <string name="reminders_for">Para: %s</string>
+    <string name="reminders_edit_title">Editar Lembrete</string>
+    <string name="reminders_new_title">Novo Lembrete</string>
+    <string name="reminders_type_label">Tipo:</string>
+    <string name="reminders_type_food">Comida</string>
+    <string name="reminders_type_walk">Passeio</string>
+    <string name="reminders_type_other">Outro</string>
+    <string name="reminders_title_label">Título</string>
+    <string name="reminders_description_label">Descrição</string>
+    <string name="reminders_time_error">Selecione um horário.</string>
+    <string name="reminders_title_required">Título é obrigatório</string>
+    <string name="reminders_save_error">Erro ao salvar lembrete.</string>
+    <string name="reminders_save">Salvar</string>
+    <string name="reminders_add_button">Adicionar</string>
+    <string name="reminders_select_time">Selecionar Horário</string>
+    <string name="reminders_time_format">%02d:%02d</string>
+
+    <!-- Add Pet -->
+    <string name="addpet_title">Cadastrar Pet</string>
+    <string name="addpet_name_label">Nome do Pet</string>
+    <string name="addpet_breed_label">Raça</string>
+    <string name="addpet_breed_placeholder">Digite para buscar...</string>
+    <string name="addpet_breed_choose">Escolha uma raça da lista</string>
+    <string name="addpet_gender_label">Gênero</string>
+    <string name="addpet_gender_placeholder">Escolha o gênero</string>
+    <string name="addpet_birthday_placeholder">Data de Nascimento</string>
+    <string name="addpet_age_calculated">Idade calculada: %d %s</string>
+    <string name="addpet_age_unit_1">ano</string>
+    <string name="addpet_age_unit_other">anos</string>
+    <string name="addpet_weight_label">Peso (kg)</string>
+    <string name="addpet_success">Pet cadastrado com sucesso!</string>
+    <string name="addpet_error">Erro: %s</string>
+    <string name="addpet_unexpected_error">Erro inesperado: %s</string>
+    <string name="addpet_button">Adicionar Pet</string>
+    <string name="addpet_error_name_required">Nome é obrigatório</string>
+    <string name="addpet_error_breed_required">Selecione uma raça</string>
+    <string name="addpet_error_gender_required">Selecione o gênero</string>
+    <string name="addpet_error_birthday_required">Selecione a data de nascimento</string>
+    <string name="addpet_date_format_display">%02d/%02d/%04d</string>
+    <string name="addpet_date_format_api">%04d-%02d-%02d</string>
+
+    <!-- User Profile / Settings -->
+    <string name="settings_title">Configurações</string>
+    <string name="settings_preferences_header">PREFERÊNCIAS</string>
+    <string name="settings_dark_mode">Tema Escuro</string>
+    <string name="settings_notifications">Notificações de Lembretes</string>
+    <string name="settings_notifications_desc">Permitir o envio de alertas de atividades.</string>
+    <string name="settings_account_header">CONTA</string>
+    <string name="settings_logout">Sair</string>
+    <string name="settings_not_authenticated">Não autenticado</string>
+    <string name="settings_user_id">ID do Usuário: %s</string>
+    <string name="settings_version">HoofCare v1.0.0</string>
+    <string name="settings_language_header">IDIOMA</string>
+    <string name="settings_language_label">Idioma</string>
+    <string name="settings_language_pt">Português</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_language_system">Sistema</string>
+
+    <!-- User Profile -->
+    <string name="profile_title">Meu Perfil</string>
+    <string name="profile_photo_updated">Foto atualizada.</string>
+    <string name="profile_photo_error">Erro ao enviar foto: %s</string>
+    <string name="profile_edit_photo">Editar foto</string>
+    <string name="profile_name_label">Nome</string>
+    <string name="profile_about_label">Sobre mim</string>
+    <string name="profile_about_empty">Nenhuma descrição adicionada</string>
+    <string name="profile_edit_button">Editar Perfil</string>
+    <string name="profile_saved">Perfil atualizado.</string>
+    <string name="profile_save_error">Erro ao salvar perfil.</string>
+    <string name="profile_edit_title">Editar Perfil</string>
+    <string name="profile_about_edit_label">Sobre mim</string>
+
+    <!-- User Profile Screens (Onboarding) -->
+    <string name="onboarding_dog_illustration">Ilustração de cachorro</string>
+    <string name="onboarding_question">Qual seria a melhor \n descrição para você?</string>
+    <string name="onboarding_just_adopted">Acabei de adotar um cão.</string>
+    <string name="onboarding_lives_with">O meu cão vive comigo.</string>
+    <string name="onboarding_future_owner">Futuro tutor de pet.</string>
+    <string name="onboarding_gender_question">Seu pet é um...</string>
+    <string name="onboarding_boy">Menino</string>
+    <string name="onboarding_girl">Menina</string>
+    <string name="onboarding_birthday_question">Quando ele nasceu?</string>
+    <string name="onboarding_birthday_placeholder">Data de Nascimento</string>
+    <string name="onboarding_select_date">Selecione uma data</string>
+    <string name="onboarding_next">Seguir</string>
+    <string name="onboarding_skip_date">Não sei a data exata</string>
+    <string name="onboarding_breed_question">Qual a raça dele?</string>
+    <string name="onboarding_breed_label">Raça</string>
+    <string name="onboarding_select_breed">Selecionar raça</string>
+    <string name="onboarding_breed_required">Por favor, selecione uma raça</string>
+    <string name="onboarding_finish">Concluir</string>
+
+    <!-- Vaccination status -->
+    <string name="vacina_up_to_date">Em dia</string>
+    <string name="vacina_expiring">Vencendo</string>
+    <string name="vacina_late">Atrasada</string>
 </resources>

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.example.hoof_care_02.R
 import com.example.hoof_care_02.ui.theme.HoofGreenLight
 import kotlinx.coroutines.delay
@@ -50,7 +51,7 @@ fun SplashScreen(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.hoofcare),
-                contentDescription = "Logo HoofCare",
+                contentDescription = stringResource(R.string.auth_logo_description),
                 modifier = Modifier
                     .alpha(alpha.value)
                     .scale(scale.value)

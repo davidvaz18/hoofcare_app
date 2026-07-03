@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -44,7 +45,17 @@ fun LoginScreen(
     val scope = rememberCoroutineScope()
     var email by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf<String?>(null) }
+    var senhaError by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(false) }
+
+    val strEmailRequired = stringResource(R.string.auth_error_email_required)
+    val strInvalidEmail = stringResource(R.string.auth_error_invalid_email)
+    val strPasswordRequired = stringResource(R.string.auth_error_password_required)
+    val strGenericUser = stringResource(R.string.common_username_fallback)
+    val strLoginSuccess = stringResource(R.string.auth_login_success)
+    val strUserNotFound = stringResource(R.string.auth_user_not_found)
+    val strWrongCred = stringResource(R.string.auth_wrong_credentials)
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -60,14 +71,14 @@ fun LoginScreen(
         ) {
             androidx.compose.foundation.Image(
                 painter = painterResource(id = R.drawable.hoofcare),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.auth_logo_description),
                 modifier = Modifier
                     .width(300.dp)
                     .height(180.dp)
             )
 
             Text(
-                text = "Entre com a sua conta\n Digite seu email para se entrar nesse app.",
+                text = stringResource(R.string.auth_login_title),
                 color = HoofWhite,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -75,85 +86,77 @@ fun LoginScreen(
 
             RoundedAuthTextField(
                 value = email,
-                onValueChange = { email = it },
-                placeholder = "email@exemplo.com",
+                onValueChange = { email = it; emailError = null },
+                placeholder = stringResource(R.string.auth_email_placeholder),
                 keyboardType = KeyboardType.Email,
                 modifier = Modifier.padding(top = 24.dp),
-                enabled = !isLoading
+                enabled = !isLoading,
+                isError = emailError != null,
+                supportingText = emailError
             )
 
             RoundedAuthTextField(
                 value = senha,
-                onValueChange = { senha = it },
-                placeholder = "Senha",
+                onValueChange = { senha = it; senhaError = null },
+                placeholder = stringResource(R.string.auth_password_placeholder),
                 isPassword = true,
                 keyboardType = KeyboardType.Password,
                 modifier = Modifier.padding(top = 10.dp),
-                enabled = !isLoading
+                enabled = !isLoading,
+                isError = senhaError != null,
+                supportingText = senhaError
             )
 
             if (isLoading) {
                 CircularProgressIndicator(color = HoofWhite, modifier = Modifier.padding(top = 16.dp))
             } else {
                 PrimaryAuthButton(
-                    text = "Continue",
+                    text = stringResource(R.string.auth_login_button),
                     onClick = {
                         val emailTrim = email.trim()
                         val senhaTrim = senha.trim()
-                        if (emailTrim.isNotEmpty() && senhaTrim.isNotEmpty()) {
-                            isLoading = true
-                            scope.launch {
-                                try {
-                                    AuthRepository.signIn(emailTrim, senhaTrim)
-                                    val user = AuthRepository.currentUser.value
-                                    UserProfileData.nomeUsuario = user?.displayName ?: "Usuário"
-                                    
-                                    Toast.makeText(context, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show()
-                                    onLoginSuccess()
-                                } catch (e: FirebaseAuthInvalidUserException) {
-                                    Toast.makeText(context, "Usuário não encontrado.", Toast.LENGTH_LONG).show()
-                                } catch (e: FirebaseAuthInvalidCredentialsException) {
-                                    Toast.makeText(context, "E-mail ou senha incorretos.", Toast.LENGTH_LONG).show()
-                                } catch (e: Exception) {
-                                    Toast.makeText(context, "Erro ao fazer login: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
-                                } finally {
-                                    isLoading = false
-                                }
+                        emailError = when {
+                            emailTrim.isEmpty() -> strEmailRequired
+                            !emailTrim.contains("@") -> strInvalidEmail
+                            else -> null
+                        }
+                        senhaError = if (senhaTrim.isEmpty()) strPasswordRequired else null
+                        if (emailError != null || senhaError != null) return@PrimaryAuthButton
+
+                        isLoading = true
+                        scope.launch {
+                            try {
+                                AuthRepository.signIn(emailTrim, senhaTrim)
+                                val user = AuthRepository.currentUser.value
+                                UserProfileData.nomeUsuario = user?.displayName ?: strGenericUser
+                                
+                                Toast.makeText(context, strLoginSuccess, Toast.LENGTH_SHORT).show()
+                                onLoginSuccess()
+                            } catch (e: FirebaseAuthInvalidUserException) {
+                                Toast.makeText(context, strUserNotFound, Toast.LENGTH_LONG).show()
+                            } catch (e: FirebaseAuthInvalidCredentialsException) {
+                                Toast.makeText(context, strWrongCred, Toast.LENGTH_LONG).show()
+                            } catch (e: Exception) {
+                                val msg = context.getString(R.string.auth_login_error, e.localizedMessage ?: "")
+                                Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                            } finally {
+                                isLoading = false
                             }
-                        } else {
-                            Toast.makeText(context, "Por favor, preencha e-mail e senha.", Toast.LENGTH_SHORT).show()
                         }
                     },
                     modifier = Modifier.padding(top = 16.dp)
                 )
             }
 
-            OrDivider()
-
-            SocialAuthButton(
-                text = "Continuar com o Google",
-                iconRes = R.drawable.google_icon_mini,
-                onClick = { /* Implementação futura */ },
-                enabled = !isLoading
-            )
-
-            SocialAuthButton(
-                text = "Continuar com o Facebook",
-                iconRes = R.drawable.facebook_icon_mini,
-                onClick = { /* Implementação futura */ },
-                modifier = Modifier.padding(top = 8.dp),
-                enabled = !isLoading
-            )
-
             PrimaryAuthButton(
-                text = "Não possui uma conta?",
+                text = stringResource(R.string.auth_no_account),
                 onClick = onNavigateToSignIn,
                 modifier = Modifier.padding(top = 8.dp),
                 enabled = !isLoading
             )
 
             Text(
-                text = "Ao clicar em continuar, você concorda com nossos Termos de Serviço e Política de Privacidade.",
+                text = stringResource(R.string.auth_terms),
                 color = HoofWhite,
                 textAlign = TextAlign.Center,
                 modifier = Modifier

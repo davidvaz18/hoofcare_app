@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,11 +24,15 @@ import coil.compose.AsyncImage
 import com.example.hoof_care_02.R
 import com.example.hoof_care_02.model.Dog
 
+enum class BottomNavTab { HOME, PETS, PROFILE }
+
 @Composable
 fun AppBottomNavigationBar(
+    selectedTab: BottomNavTab,
     onHomeClick: () -> Unit,
     onPetsClick: () -> Unit,
-    onProfileClick: () -> Unit
+    onProfileClick: () -> Unit,
+    middleIsHealth: Boolean = false
 ) {
     Box(
         modifier = Modifier
@@ -47,27 +52,82 @@ fun AppBottomNavigationBar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.botaohome),
-                contentDescription = "Home",
+            NavItem(
+                isActive = selectedTab == BottomNavTab.HOME,
+                onClick = onHomeClick,
+                modifier = Modifier.weight(1f)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.botaohome),
+                    contentDescription = stringResource(R.string.nav_home)
+                )
+            }
+
+            if (middleIsHealth) {
+                NavItem(
+                    isActive = selectedTab == BottomNavTab.PETS,
+                    onClick = onPetsClick,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Favorite,
+                        contentDescription = stringResource(R.string.nav_health),
+                        tint = if (selectedTab == BottomNavTab.PETS) Color(0xFF38C075) else Color.Gray,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+            } else {
+                NavItem(
+                    isActive = selectedTab == BottomNavTab.PETS,
+                    onClick = onPetsClick,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.botaomaiscachorro),
+                        contentDescription = stringResource(R.string.nav_pets),
+                        modifier = Modifier.height(85.dp)
+                    )
+                }
+            }
+
+            NavItem(
+                isActive = selectedTab == BottomNavTab.PROFILE,
+                onClick = onProfileClick,
+                modifier = Modifier.weight(1f)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.botaoprofile),
+                    contentDescription = stringResource(R.string.nav_profile)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun NavItem(
+    isActive: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier.clickable(onClick = onClick),
+            contentAlignment = Alignment.Center
+        ) {
+            content()
+        }
+        if (isActive) {
+            Box(
                 modifier = Modifier
-                    .weight(1f)
-                    .clickable { onHomeClick() }
-            )
-            Image(
-                painter = painterResource(id = R.drawable.botaomaiscachorro),
-                contentDescription = "Pets",
-                modifier = Modifier
-                    .height(85.dp)
-                    .weight(1f)
-                    .clickable { onPetsClick() }
-            )
-            Image(
-                painter = painterResource(id = R.drawable.botaoprofile),
-                contentDescription = "Perfil",
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { onProfileClick() }
+                    .padding(top = 2.dp)
+                    .size(6.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF38C075))
             )
         }
     }
@@ -85,7 +145,7 @@ fun HeaderSection(userName: String, onProfileClick: () -> Unit = {}) {
             if (photoUrl != null) {
                 AsyncImage(
                     model = photoUrl,
-                    contentDescription = "Perfil",
+                    contentDescription = stringResource(R.string.nav_profile),
                     modifier = Modifier
                         .size(60.dp)
                         .clip(CircleShape)
@@ -96,7 +156,7 @@ fun HeaderSection(userName: String, onProfileClick: () -> Unit = {}) {
             } else {
                 Image(
                     painter = painterResource(id = R.drawable.fotousuario),
-                    contentDescription = "Perfil",
+                    contentDescription = stringResource(R.string.nav_profile),
                     modifier = Modifier
                         .size(60.dp)
                         .clip(CircleShape)
@@ -104,7 +164,7 @@ fun HeaderSection(userName: String, onProfileClick: () -> Unit = {}) {
                 )
             }
             Spacer(modifier = Modifier.width(16.dp))
-            Text(text = "Olá, $userName!", fontSize = 18.sp, fontWeight = FontWeight.Medium)
+            Text(text = stringResource(R.string.common_hello, userName), fontSize = 18.sp, fontWeight = FontWeight.Medium)
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = "Meus Pets", fontSize = 20.sp, fontWeight = FontWeight.Bold)
@@ -144,7 +204,7 @@ fun DogCard(
                         fontWeight = FontWeight.Bold
                     )
                     Text(text = dog.breed.name, color = Color.White, fontSize = 16.sp)
-                    Text(text = "${dog.age} anos", color = Color.White, fontSize = 14.sp)
+                    Text(text = stringResource(R.string.common_years, dog.age), color = Color.White, fontSize = 14.sp)
                 }
 
                 if (onExcluir != null) {
@@ -155,7 +215,7 @@ fun DogCard(
                     ) {
                         Icon(
                             Icons.Default.Delete,
-                            contentDescription = "Excluir Pet",
+                            contentDescription = stringResource(R.string.common_delete),
                             tint = Color.White
                         )
                     }
@@ -173,7 +233,7 @@ fun DogCard(
                     Text("Ver Perfil", color = Color.White)
                 }
                 TextButton(onClick = onSelecionar) {
-                    Text("Selecionar", color = Color.White)
+                    Text(stringResource(R.string.common_select), color = Color.White)
                 }
             }
         }

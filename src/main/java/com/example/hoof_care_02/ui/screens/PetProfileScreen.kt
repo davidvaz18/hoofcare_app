@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -32,6 +34,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.hoof_care_02.R
 import com.example.hoof_care_02.data.repository.PetRepository
+import com.example.hoof_care_02.model.ALL_BREEDS
+import com.example.hoof_care_02.model.Breed
 import com.example.hoof_care_02.model.Dog
 import com.example.hoof_care_02.ui.theme.HoofGreenDark
 import com.google.firebase.auth.FirebaseAuth
@@ -54,8 +58,17 @@ fun PetProfileScreen(
     var isLoading by remember { mutableStateOf(true) }
     var isUploadingPhoto by remember { mutableStateOf(false) }
 
-
     var fieldBeingEdited by remember { mutableStateOf<String?>(null) }
+    var editingBreed by remember { mutableStateOf(false) }
+
+    val strPetNotFound = stringResource(R.string.petprofile_not_found)
+    val strLoadError = stringResource(R.string.petprofile_load_error)
+    val strSaved = stringResource(R.string.petprofile_saved)
+    val strSaveError = stringResource(R.string.petprofile_save_error)
+    val strNotAuthenticated = stringResource(R.string.petprofile_not_authenticated)
+    val strPhotoUpdated = stringResource(R.string.petprofile_photo_updated)
+    val strPhotoError = stringResource(R.string.petprofile_photo_error)
+    val strInvalidWeight = stringResource(R.string.petprofile_invalid_weight)
 
     fun reload() {
         scope.launch {
@@ -68,10 +81,10 @@ fun PetProfileScreen(
             try {
                 dog = PetRepository.getDogById(petId)
                 if (dog == null) {
-                    Toast.makeText(context, "Pet não encontrado.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, strPetNotFound, Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(context, "Erro ao carregar detalhes.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, strLoadError, Toast.LENGTH_SHORT).show()
             } finally {
                 isLoading = false
             }
@@ -83,9 +96,9 @@ fun PetProfileScreen(
             val result = PetRepository.saveDog(updated)
             if (result.isSuccess) {
                 dog = updated
-                Toast.makeText(context, "Alterações salvas.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, strSaved, Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(context, "Erro ao salvar alterações.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, strSaveError, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -99,7 +112,7 @@ fun PetProfileScreen(
                 try {
                     val uid = FirebaseAuth.getInstance().currentUser?.uid
                     if (uid == null) {
-                        Toast.makeText(context, "Usuário não autenticado.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, strNotAuthenticated, Toast.LENGTH_SHORT).show()
                         return@launch
                     }
                     val ref = FirebaseStorage.getInstance().reference
@@ -110,12 +123,13 @@ fun PetProfileScreen(
                     val result = PetRepository.saveDog(updated)
                     if (result.isSuccess) {
                         dog = updated
-                        Toast.makeText(context, "Foto atualizada.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, strPhotoUpdated, Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(context, "Erro ao salvar foto.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, strPhotoError, Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(context, "Erro ao enviar foto: ${e.message}", Toast.LENGTH_LONG).show()
+                    val msg = context.getString(R.string.petprofile_photo_upload_error, e.message)
+                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
                 } finally {
                     isUploadingPhoto = false
                 }
@@ -126,15 +140,15 @@ fun PetProfileScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Perfil do Pet") },
+                title = { Text(stringResource(R.string.petprofile_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 actions = {
                     IconButton(onClick = onNavigateToHealth) {
-                        Icon(Icons.Default.MonitorHeart, contentDescription = "Ficha de Saúde")
+                        Icon(Icons.Default.MonitorHeart, contentDescription = stringResource(R.string.petprofile_view_health))
                     }
                 }
             )
@@ -184,30 +198,27 @@ fun PetProfileScreen(
                             if (isUploadingPhoto) {
                                 CircularProgressIndicator(modifier = Modifier.size(18.dp), color = Color.White, strokeWidth = 2.dp)
                             } else {
-                                Icon(Icons.Default.Edit, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
+                                Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.petprofile_edit_photo), tint = Color.White, modifier = Modifier.size(20.dp))
                             }
                         }
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(text = dog!!.name, fontSize = 28.sp, fontWeight = FontWeight.Bold)
                         IconButton(onClick = { fieldBeingEdited = "nome" }) {
-                            Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(20.dp))
+                            Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.petprofile_edit_name), modifier = Modifier.size(20.dp))
                         }
                     }
 
-
                     SuggestionChip(
-                        onClick = { },
+                        onClick = { editingBreed = true },
                         label = { Text(dog!!.breed.name) },
                         colors = SuggestionChipDefaults.suggestionChipColors(containerColor = Color(0xFFE8F5E9))
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
-
 
                     Card(
                         modifier = Modifier.fillMaxWidth(),
@@ -215,14 +226,20 @@ fun PetProfileScreen(
                         colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
                     ) {
                         Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                            ProfileDetailRow("Gênero", if (dog!!.sex == "M") "Macho" else "Fêmea") {
+                            ProfileDetailRow(stringResource(R.string.petprofile_gender), if (dog!!.sex == "M") stringResource(R.string.common_male) else stringResource(R.string.common_female)) {
                                 fieldBeingEdited = "genero"
                             }
-                            ProfileDetailRowReadOnly("Idade", if (dog!!.age == 1) "1 ano" else "${dog!!.age} anos")
-                            ProfileDetailRow("Peso", "${dog!!.weight ?: 0.0} kg") {
+                            ProfileDetailRowReadOnly(
+                                stringResource(R.string.petprofile_age),
+                                if (dog!!.age == 1) stringResource(R.string.common_year_1) else stringResource(R.string.common_years, dog!!.age)
+                            )
+                            ProfileDetailRow(stringResource(R.string.petprofile_weight), stringResource(R.string.common_weight_kg, (dog!!.weight ?: 0.0).toString())) {
                                 fieldBeingEdited = "peso"
                             }
-                            ProfileDetailRow("Aniversário", formatBirthday(dog!!.birthday)) {
+                            ProfileDetailRow(
+                                stringResource(R.string.petprofile_birthday),
+                                formatBirthday(dog!!.birthday, stringResource(R.string.petprofile_birthday_not_informed), stringResource(R.string.petprofile_birthday_display))
+                            ) {
                                 fieldBeingEdited = "aniversario"
                             }
                         }
@@ -234,20 +251,19 @@ fun PetProfileScreen(
                         onClick = onNavigateToHealth,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(Icons.Default.MonitorHeart, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Icon(Icons.Default.MonitorHeart, contentDescription = stringResource(R.string.petprofile_view_health), modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Ver Ficha de Saúde")
+                        Text(stringResource(R.string.petprofile_health_button))
                     }
                 }
             }
-
 
             val currentDog = dog
             if (fieldBeingEdited != null && currentDog != null) {
                 when (fieldBeingEdited) {
                     "nome" -> EditTextFieldDialog(
-                        title = "Editar nome",
-                        label = "Nome",
+                        title = stringResource(R.string.petprofile_edit_name),
+                        label = stringResource(R.string.petprofile_name_label),
                         initialValue = currentDog.name,
                         onDismiss = { fieldBeingEdited = null },
                         onConfirm = { newValue ->
@@ -264,15 +280,15 @@ fun PetProfileScreen(
                         }
                     )
                     "peso" -> EditTextFieldDialog(
-                        title = "Editar peso",
-                        label = "Peso (kg)",
+                        title = stringResource(R.string.petprofile_edit_weight),
+                        label = stringResource(R.string.petprofile_weight_label),
                         initialValue = currentDog.weight?.toString() ?: "",
                         keyboardType = KeyboardType.Decimal,
                         onDismiss = { fieldBeingEdited = null },
                         onConfirm = { newValue ->
                             val parsed = newValue.replace(",", ".").toDoubleOrNull()
                             if (parsed == null) {
-                                Toast.makeText(context, "Peso inválido.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, strInvalidWeight, Toast.LENGTH_SHORT).show()
                             } else {
                                 saveDog(currentDog.copy(weight = parsed))
                                 fieldBeingEdited = null
@@ -283,7 +299,6 @@ fun PetProfileScreen(
                         initialValue = currentDog.birthday,
                         onDismiss = { fieldBeingEdited = null },
                         onConfirm = { newValue ->
-                            // A idade é recalculada automaticamente a partir da nova data de nascimento
                             val idadeRecalculada = calcularIdadeAPartirDoNascimento(newValue)
                             saveDog(currentDog.copy(birthday = newValue, age = idadeRecalculada))
                             fieldBeingEdited = null
@@ -291,8 +306,92 @@ fun PetProfileScreen(
                     )
                 }
             }
+
+            if (editingBreed && currentDog != null) {
+                EditBreedDialog(
+                    currentBreed = currentDog.breed,
+                    onDismiss = { editingBreed = false },
+                    onConfirm = { newBreed ->
+                        saveDog(currentDog.copy(breed = newBreed))
+                        editingBreed = false
+                    }
+                )
+            }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun EditBreedDialog(
+    currentBreed: Breed,
+    onDismiss: () -> Unit,
+    onConfirm: (Breed) -> Unit
+) {
+    var searchText by remember { mutableStateOf(currentBreed.name) }
+    var selectedBreed by remember { mutableStateOf(currentBreed) }
+    var expanded by remember { mutableStateOf(false) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.petprofile_edit_breed)) },
+        text = {
+            Column {
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded }
+                ) {
+                    OutlinedTextField(
+                        value = searchText,
+                        onValueChange = {
+                            searchText = it
+                            selectedBreed = ALL_BREEDS.firstOrNull { b -> b.name.equals(it, ignoreCase = true) } ?: selectedBreed
+                        },
+                        label = { Text(stringResource(R.string.petprofile_breed_label)) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                    )
+                    val filtered = ALL_BREEDS.filter { it.name.contains(searchText, ignoreCase = true) }
+                    ExposedDropdownMenu(
+                        expanded = expanded && filtered.isNotEmpty(),
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        filtered.forEach { breed ->
+                            DropdownMenuItem(
+                                text = { Text(breed.name) },
+                                onClick = {
+                                    selectedBreed = breed
+                                    searchText = breed.name
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+                if (selectedBreed.id.isNotBlank()) {
+                    Text(
+                        text = stringResource(R.string.petprofile_breed_recognized),
+                        color = Color(0xFF38C075),
+                        fontSize = 13.sp,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    if (selectedBreed.id.isNotBlank()) onConfirm(selectedBreed)
+                },
+                enabled = selectedBreed.id.isNotBlank()
+            ) { Text(stringResource(R.string.common_save)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
+        }
+    )
 }
 
 @Composable
@@ -315,7 +414,7 @@ fun ProfileDetailRow(label: String, value: String, onEdit: () -> Unit) {
             Text(text = value, fontSize = 18.sp, fontWeight = FontWeight.Medium)
         }
         IconButton(onClick = onEdit) {
-            Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp), tint = Color.Gray)
+            Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.common_edit), modifier = Modifier.size(18.dp), tint = Color.Gray)
         }
     }
 }
@@ -340,7 +439,7 @@ fun EditTextFieldDialog(
                 onValueChange = { value = it },
                 label = { Text(label) },
                 singleLine = true,
-                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = keyboardType),
+                keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
                 modifier = Modifier.fillMaxWidth()
             )
         },
@@ -348,10 +447,10 @@ fun EditTextFieldDialog(
             TextButton(onClick = {
                 if (value.isBlank()) return@TextButton
                 onConfirm(value.trim())
-            }) { Text("Salvar") }
+            }) { Text(stringResource(R.string.common_save)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancelar") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         }
     )
 }
@@ -365,24 +464,24 @@ fun EditGenderDialog(
     var selected by remember { mutableStateOf(if (initialValue == "F") "F" else "M") }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Editar gênero") },
+        title = { Text(stringResource(R.string.petprofile_edit_gender)) },
         text = {
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable { selected = "M" }) {
                     RadioButton(selected = selected == "M", onClick = { selected = "M" })
-                    Text("Macho")
+                    Text(stringResource(R.string.common_male))
                 }
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable { selected = "F" }) {
                     RadioButton(selected = selected == "F", onClick = { selected = "F" })
-                    Text("Fêmea")
+                    Text(stringResource(R.string.common_female))
                 }
             }
         },
         confirmButton = {
-            TextButton(onClick = { onConfirm(selected) }) { Text("Salvar") }
+            TextButton(onClick = { onConfirm(selected) }) { Text(stringResource(R.string.common_save)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancelar") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         }
     )
 }
@@ -418,11 +517,11 @@ fun EditBirthdayDialog(
     }
 }
 
-private fun formatBirthday(birthday: String?): String {
-    if (birthday == null) return "Não informado"
+private fun formatBirthday(birthday: String?, notInformedText: String, displayPattern: String): String {
+    if (birthday == null) return notInformedText
     return try {
         val backendFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val displayFormat = SimpleDateFormat("dd 'de' MMMM 'de' yyyy", Locale("pt", "BR"))
+        val displayFormat = SimpleDateFormat(displayPattern, Locale("pt", "BR"))
         val date = backendFormat.parse(birthday)
         if (date != null) displayFormat.format(date) else birthday
     } catch (e: Exception) {

@@ -1,9 +1,6 @@
 package com.example.hoof_care_02.data.repository
 
 import com.example.hoof_care_02.model.*
-import com.example.hoof_care_02.ui.screens.Alergia
-import com.example.hoof_care_02.ui.screens.Vacina
-import com.example.hoof_care_02.ui.screens.VetProcedimento
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
@@ -67,12 +64,44 @@ object PetRepository {
         }
     }
 
+    // --- Métodos de Saúde (Vacinas) ---
+
     suspend fun getVacinas(petId: String): List<Vacina> {
         val collection = petsCollection?.document(petId)?.collection("vacinas") ?: return emptyList()
         return try {
             collection.get().await().documents.mapNotNull { it.toObject<Vacina>() }
         } catch (e: Exception) {
             emptyList()
+        }
+    }
+
+    suspend fun saveVacina(petId: String, vacina: Vacina): Result<Unit> {
+        val collection = petsCollection?.document(petId)?.collection("vacinas")
+            ?: return Result.failure(Exception("Usuário não autenticado ou pet não encontrado."))
+
+        return try {
+            if (vacina.id.isEmpty()) {
+                val docRef = collection.document()
+                val vacinaWithId = vacina.copy(id = docRef.id)
+                docRef.set(vacinaWithId).await()
+            } else {
+                collection.document(vacina.id).set(vacina).await()
+            }
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun deleteVacina(petId: String, vacinaId: String): Result<Unit> {
+        val collection = petsCollection?.document(petId)?.collection("vacinas")
+            ?: return Result.failure(Exception("Usuário não autenticado."))
+
+        return try {
+            collection.document(vacinaId).delete().await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 

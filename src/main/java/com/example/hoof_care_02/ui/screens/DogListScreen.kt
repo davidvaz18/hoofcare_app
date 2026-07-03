@@ -13,7 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.hoof_care_02.R
 import com.example.hoof_care_02.data.repository.PetRepository
 import com.example.hoof_care_02.model.Dog
 import com.example.hoof_care_02.ui.theme.HoofGreenDark
@@ -35,12 +37,14 @@ fun DogListScreen(
     var dogPendingDelete by remember { mutableStateOf<Dog?>(null) }
     var isDeleting by remember { mutableStateOf(false) }
 
+    val strDoglistLoadError = stringResource(R.string.doglist_load_error)
+
     fun loadDogs() {
         scope.launch {
             try {
                 dogList = PetRepository.getDogs()
             } catch (e: Exception) {
-                Toast.makeText(context, "Erro ao carregar pets.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, strDoglistLoadError, Toast.LENGTH_SHORT).show()
             } finally {
                 isLoading = false
             }
@@ -60,12 +64,13 @@ fun DogListScreen(
                     containerColor = Color.Black,
                     contentColor = Color.White
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Adicionar Pet")
+                    Icon(Icons.Default.Add, contentDescription = stringResource(R.string.doglist_add_pet))
                 }
             }
         },
         bottomBar = {
             AppBottomNavigationBar(
+                selectedTab = BottomNavTab.PETS,
                 onHomeClick = onNavigateHome,
                 onPetsClick = { /* Já estamos aqui */ },
                 onProfileClick = onNavigateToUserProfile
@@ -91,7 +96,7 @@ fun DogListScreen(
                     colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3E0))
                 ) {
                     Text(
-                        text = "Você atingiu o limite de 3 pets cadastrados. Exclua um pet (ícone de lixeira no card) para poder adicionar outro.",
+                        text = stringResource(R.string.doglist_limit_reached),
                         modifier = Modifier.padding(12.dp),
                         color = Color(0xFF8A5A00)
                     )
@@ -104,7 +109,7 @@ fun DogListScreen(
                 }
             } else if (dogList.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Nenhum pet cadastrado ainda.", color = Color.Gray)
+                    Text(stringResource(R.string.doglist_empty), color = Color.Gray)
                 }
             } else {
                 LazyColumn(
@@ -118,7 +123,7 @@ fun DogListScreen(
                             onVerPerfil = { onNavigateToPetProfile(dog.id) },
                             onSelecionar = {
                                 UserProfileData.cachorroSelecionado = dog
-                                Toast.makeText(context, "${dog.name} selecionado!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.doglist_selected, dog.name), Toast.LENGTH_SHORT).show()
                                 onNavigateHome()
                             },
                             onExcluir = { dogPendingDelete = dog }
@@ -132,8 +137,8 @@ fun DogListScreen(
         if (dogToDelete != null) {
             AlertDialog(
                 onDismissRequest = { if (!isDeleting) dogPendingDelete = null },
-                title = { Text("Excluir pet") },
-                text = { Text("Tem certeza que deseja excluir ${dogToDelete.name}? Essa ação não pode ser desfeita.") },
+                title = { Text(stringResource(R.string.doglist_delete_title)) },
+                text = { Text(stringResource(R.string.doglist_delete_confirm, dogToDelete.name)) },
                 confirmButton = {
                     TextButton(
                         enabled = !isDeleting,
@@ -145,12 +150,12 @@ fun DogListScreen(
                                     if (UserProfileData.cachorroSelecionado?.id == dogToDelete.id) {
                                         UserProfileData.cachorroSelecionado = null
                                     }
-                                    Toast.makeText(context, "${dogToDelete.name} excluído.", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.doglist_deleted, dogToDelete.name), Toast.LENGTH_SHORT).show()
                                     dogPendingDelete = null
                                     isDeleting = false
                                     loadDogs()
                                 } else {
-                                    Toast.makeText(context, "Erro ao excluir: ${result.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(context, context.getString(R.string.doglist_delete_error, result.exceptionOrNull()?.message ?: ""), Toast.LENGTH_LONG).show()
                                     isDeleting = false
                                 }
                             }
@@ -159,13 +164,13 @@ fun DogListScreen(
                         if (isDeleting) {
                             CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                         } else {
-                            Text("Excluir", color = Color.Red)
+                            Text(stringResource(R.string.common_delete), color = Color.Red)
                         }
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { dogPendingDelete = null }, enabled = !isDeleting) {
-                        Text("Cancelar")
+                        Text(stringResource(R.string.common_cancel))
                     }
                 }
             )

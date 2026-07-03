@@ -16,7 +16,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import com.example.hoof_care_02.R
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -35,7 +38,9 @@ fun RoundedAuthTextField(
     modifier: Modifier = Modifier,
     isPassword: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    isError: Boolean = false,
+    supportingText: String? = null
 ) {
     OutlinedTextField(
         value = value,
@@ -44,6 +49,10 @@ fun RoundedAuthTextField(
         singleLine = true,
         shape = RoundedCornerShape(30.dp),
         enabled = enabled,
+        isError = isError,
+        supportingText = if (supportingText != null) {
+            { Text(supportingText, color = Color(0xFFD32F2F)) }
+        } else null,
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = keyboardType),
         colors = OutlinedTextFieldDefaults.colors(
@@ -99,7 +108,7 @@ fun OrDivider(modifier: Modifier = Modifier) {
                 .background(HoofDivider)
         )
         Text(
-            text = "Ou",
+            text = stringResource(R.string.auth_or_divider),
             color = HoofWhite,
             modifier = Modifier.padding(horizontal = 16.dp)
         )

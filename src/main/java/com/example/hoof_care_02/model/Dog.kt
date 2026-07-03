@@ -17,5 +17,6 @@ data class Dog(
     val castrado: String? = null,
     val descricaoLivre: String? = null,
     val veterinarioNome: String? = null,
-    val veterinarioClinica: String? = null
+    val veterinarioClinica: String? = null,
+    val veterinarioTelefone: String? = null
 )

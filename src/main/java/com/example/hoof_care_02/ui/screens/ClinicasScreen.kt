@@ -75,7 +75,7 @@ fun ClinicasScreen(
         ) {
             Icon(
                 Icons.Default.LocationOn,
-                contentDescription = null,
+                contentDescription = "Localização",
                 modifier = Modifier.size(100.dp),
                 tint = HoofGreenDark
             )

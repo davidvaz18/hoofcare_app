@@ -1,10 +1,8 @@
 package com.example.hoof_care_02.navigation
 
-import android.app.Activity
-import android.content.Intent
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,12 +16,11 @@ fun HoofCareNavHost(
     navController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-
     NavHost(
         navController = navController,
         startDestination = HoofCareDestinations.SPLASH,
-        modifier = modifier
+        // Aplicando proteção para que o NavHost nunca invada a Nav Bar inferior do OS
+        modifier = modifier.navigationBarsPadding() 
     ) {
         composable(HoofCareDestinations.SPLASH) {
             SplashScreen(
@@ -58,24 +55,12 @@ fun HoofCareNavHost(
 
         composable(HoofCareDestinations.PAGINA_HOME) {
             HomeScreen(
-                onNavigateToPets = {
-                    navController.navigate(HoofCareDestinations.ADICAO_PET)
-                },
-                onNavigateToLembretes = {
-                    navController.navigate(HoofCareDestinations.LEMBRETES)
-                },
-                onNavigateToSettings = {
-                    navController.navigate(HoofCareDestinations.CONFIGURACOES)
-                },
-                onNavigateToProfile = {
-                    navController.navigate(HoofCareDestinations.USER_PROFILE)
-                },
-                onNavigateToClinicas = {
-                    navController.navigate(HoofCareDestinations.CLINICAS)
-                },
-                onNavigateToSaude = { petId ->
-                    navController.navigate(HoofCareDestinations.saudePetRoute(petId))
-                }
+                onNavigateToPets = { navController.navigate(HoofCareDestinations.ADICAO_PET) },
+                onNavigateToLembretes = { navController.navigate(HoofCareDestinations.LEMBRETES) },
+                onNavigateToSettings = { navController.navigate(HoofCareDestinations.CONFIGURACOES) },
+                onNavigateToProfile = { navController.navigate(HoofCareDestinations.USER_PROFILE) },
+                onNavigateToClinicas = { navController.navigate(HoofCareDestinations.CLINICAS) },
+                onNavigateToSaude = { petId -> navController.navigate(HoofCareDestinations.saudePetRoute(petId)) }
             )
         }
 
@@ -92,39 +77,27 @@ fun HoofCareNavHost(
 
         composable(HoofCareDestinations.ADICAO_PET) {
             DogListScreen(
-                onNavigateToAddPet = {
-                    navController.navigate(HoofCareDestinations.CADASTRO_PET)
-                },
-                onNavigateToPetProfile = { petId ->
-                    navController.navigate(HoofCareDestinations.perfilPetRoute(petId))
-                },
+                onNavigateToAddPet = { navController.navigate(HoofCareDestinations.CADASTRO_PET) },
+                onNavigateToPetProfile = { petId -> navController.navigate(HoofCareDestinations.perfilPetRoute(petId)) },
                 onNavigateHome = {
                     navController.navigate(HoofCareDestinations.PAGINA_HOME) {
                         popUpTo(HoofCareDestinations.PAGINA_HOME) { inclusive = true }
                     }
                 },
-                onNavigateToUserProfile = {
-                    navController.navigate(HoofCareDestinations.USER_PROFILE)
-                },
-                onBack = {
-                    navController.popBackStack()
-                }
+                onNavigateToUserProfile = { navController.navigate(HoofCareDestinations.USER_PROFILE) },
+                onBack = { navController.popBackStack() }
             )
         }
 
         composable(HoofCareDestinations.CADASTRO_PET) {
             AddPetScreen(
                 onBack = { navController.popBackStack() },
-                onSuccess = {
-                    navController.popBackStack()
-                }
+                onSuccess = { navController.popBackStack() }
             )
         }
 
         composable(HoofCareDestinations.LEMBRETES) {
-            RemindersScreen(
-                onBack = { navController.popBackStack() }
-            )
+            RemindersScreen(onBack = { navController.popBackStack() })
         }
 
         composable(
@@ -135,9 +108,7 @@ fun HoofCareNavHost(
             PetProfileScreen(
                 petId = petId,
                 onBack = { navController.popBackStack() },
-                onNavigateToHealth = {
-                    navController.navigate(HoofCareDestinations.saudePetRoute(petId))
-                }
+                onNavigateToHealth = { navController.navigate(HoofCareDestinations.saudePetRoute(petId)) }
             )
         }
 
@@ -149,50 +120,63 @@ fun HoofCareNavHost(
             PetHealthScreenRoute(
                 petId = petId,
                 onBack = { navController.popBackStack() },
+                onEditarFicha = { navController.navigate(HoofCareDestinations.editarSaudePetRoute(petId)) },
                 onHomeClick = {
                     navController.navigate(HoofCareDestinations.PAGINA_HOME) {
                         popUpTo(HoofCareDestinations.PAGINA_HOME) { inclusive = true }
                     }
                 },
-                onProfileClick = {
-                    navController.navigate(HoofCareDestinations.USER_PROFILE)
-                }
+                onPetsClick = { navController.navigate(HoofCareDestinations.ADICAO_PET) },
+                onProfileClick = { navController.navigate(HoofCareDestinations.USER_PROFILE) }
+            )
+        }
+
+        composable(
+            route = HoofCareDestinations.EDITAR_SAUDE_PET,
+            arguments = listOf(navArgument("petId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val petId = backStackEntry.arguments?.getString("petId") ?: ""
+            EditPetHealthScreenRoute(
+                petId = petId,
+                onBack = { navController.popBackStack() },
+                onSaveSuccess = { navController.popBackStack() }
             )
         }
 
         composable(HoofCareDestinations.CONFIGURACOES) {
             SettingsScreen(
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onLogout = {
+                    navController.navigate(HoofCareDestinations.LOGIN) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             )
         }
 
         composable(HoofCareDestinations.CLINICAS) {
-            ClinicasScreen(
-                onBack = { navController.popBackStack() }
-            )
+            ClinicasScreen(onBack = { navController.popBackStack() })
         }
 
+        // --- FLUXO DE ONBOARDING ---
         composable(HoofCareDestinations.USER_PROFILE_01) {
             UserProfileScreen01(
                 onNext = { navController.navigate(HoofCareDestinations.USER_PROFILE_02) },
                 onBack = { navController.popBackStack() }
             )
         }
-
         composable(HoofCareDestinations.USER_PROFILE_02) {
             UserProfileScreen02(
                 onNext = { navController.navigate(HoofCareDestinations.USER_PROFILE_03) },
                 onBack = { navController.popBackStack() }
             )
         }
-
         composable(HoofCareDestinations.USER_PROFILE_03) {
             UserProfileScreen03(
                 onNext = { navController.navigate(HoofCareDestinations.USER_PROFILE_04) },
                 onBack = { navController.popBackStack() }
             )
         }
-
         composable(HoofCareDestinations.USER_PROFILE_04) {
             UserProfileScreen04(
                 onFinish = {

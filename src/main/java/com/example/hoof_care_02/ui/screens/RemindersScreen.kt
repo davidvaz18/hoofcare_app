@@ -189,8 +189,8 @@ fun ReminderItem(
     onDelete: () -> Unit = {}
 ) {
     val backgroundColor = when (reminder.type) {
-        "Comida" -> Color(0xFF4CAF50)
-        "Passeio" -> Color(0xFFFF9800)
+        "Comida" -> Color(0xFF2E7D32)
+        "Passeio" -> Color(0xFFC43E00)
         else -> Color(0xFF7E57C2)
     }
 
@@ -237,12 +237,12 @@ fun ReminderItem(
                     fontWeight = FontWeight.Medium
                 )
                 Row {
-                    IconButton(onClick = onEdit, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.Edit, contentDescription = "Editar", tint = Color.White, modifier = Modifier.size(18.dp))
+                    IconButton(onClick = onEdit) {
+                        Icon(Icons.Default.Edit, contentDescription = "Editar", tint = Color.White, modifier = Modifier.size(20.dp))
                     }
                     Spacer(modifier = Modifier.width(4.dp))
-                    IconButton(onClick = onDelete, modifier = Modifier.size(32.dp)) {
-                        Icon(Icons.Default.Delete, contentDescription = "Excluir", tint = Color.White, modifier = Modifier.size(18.dp))
+                    IconButton(onClick = onDelete) {
+                        Icon(Icons.Default.Delete, contentDescription = "Excluir", tint = Color.White, modifier = Modifier.size(20.dp))
                     }
                 }
             }
@@ -266,6 +266,7 @@ fun ReminderFormDialog(
 
     var title by remember { mutableStateOf(existingReminder?.title ?: "") }
     var description by remember { mutableStateOf(existingReminder?.description ?: "") }
+    var titleError by remember { mutableStateOf<String?>(null) }
     var selectedType by remember { mutableStateOf(existingReminder?.type ?: "Comida") }
     var selectedTime by remember { mutableStateOf(existingReminder?.time ?: "Selecionar Horário") }
     var timeForSave by remember { mutableStateOf(existingReminder?.time ?: "") }
@@ -290,21 +291,23 @@ fun ReminderFormDialog(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("Tipo:", fontWeight = FontWeight.Bold)
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(selected = selectedType == "Comida", onClick = { selectedType = "Comida" })
-                    Text("Comida", modifier = Modifier.clickable { selectedType = "Comida" })
+                    RadioButton(selected = selectedType == "Comida", onClick = { selectedType = "Comida"; titleError = null })
+                    Text("Comida", modifier = Modifier.clickable { selectedType = "Comida"; titleError = null })
                     Spacer(modifier = Modifier.width(8.dp))
-                    RadioButton(selected = selectedType == "Passeio", onClick = { selectedType = "Passeio" })
-                    Text("Passeio", modifier = Modifier.clickable { selectedType = "Passeio" })
+                    RadioButton(selected = selectedType == "Passeio", onClick = { selectedType = "Passeio"; titleError = null })
+                    Text("Passeio", modifier = Modifier.clickable { selectedType = "Passeio"; titleError = null })
                     Spacer(modifier = Modifier.width(8.dp))
-                    RadioButton(selected = selectedType == "Outro", onClick = { selectedType = "Outro" })
-                    Text("Outro", modifier = Modifier.clickable { selectedType = "Outro" })
+                    RadioButton(selected = selectedType == "Outro", onClick = { selectedType = "Outro"; titleError = null })
+                    Text("Outro", modifier = Modifier.clickable { selectedType = "Outro"; titleError = null })
                 }
 
                 if (selectedType == "Outro") {
                     OutlinedTextField(
                         value = title,
-                        onValueChange = { title = it },
+                        onValueChange = { title = it; titleError = null },
                         label = { Text("Título") },
+                        isError = titleError != null,
+                        supportingText = titleError?.let { { Text(it, color = Color(0xFFD32F2F)) } },
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = Color.Black,
                             unfocusedTextColor = Color.Black
@@ -340,10 +343,8 @@ fun ReminderFormDialog(
                         Toast.makeText(context, "Selecione um horário.", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
-                    if (selectedType == "Outro" && title.isBlank()) {
-                        Toast.makeText(context, "Título é obrigatório para 'Outro'.", Toast.LENGTH_SHORT).show()
-                        return@Button
-                    }
+                    titleError = if (selectedType == "Outro" && title.isBlank()) "Título é obrigatório" else null
+                    if (titleError != null) return@Button
 
                     isSaving = true
                     scope.launch {

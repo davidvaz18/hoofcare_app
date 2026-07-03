@@ -76,7 +76,7 @@ fun UserProfileScreen01(
         Spacer(modifier = Modifier.height(40.dp))
         Image(
             painter = painterResource(id = R.drawable.cachorro_acariciado_png),
-            contentDescription = null,
+            contentDescription = "Ilustração de cachorro",
             modifier = Modifier.size(320.dp, 135.dp)
         )
         Spacer(modifier = Modifier.height(32.dp))
@@ -237,7 +237,7 @@ fun UserProfileScreen04(
                 ),
                 trailingIcon = {
                     IconButton(onClick = { expanded = !expanded }) {
-                        Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                        Icon(Icons.Default.ArrowDropDown, contentDescription = "Selecionar raça")
                     }
                 }
             )

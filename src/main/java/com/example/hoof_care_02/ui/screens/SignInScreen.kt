@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -47,7 +48,22 @@ fun SignInScreen(
     var email by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
     var confirmarSenha by remember { mutableStateOf("") }
+    var nomeError by remember { mutableStateOf<String?>(null) }
+    var emailError by remember { mutableStateOf<String?>(null) }
+    var senhaError by remember { mutableStateOf<String?>(null) }
+    var confirmarSenhaError by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(false) }
+
+    val strNameRequired = stringResource(R.string.auth_error_name_required)
+    val strEmailRequired = stringResource(R.string.auth_error_email_required)
+    val strInvalidEmail = stringResource(R.string.auth_error_invalid_email)
+    val strPasswordRequired = stringResource(R.string.auth_error_password_required)
+    val strConfirmRequired = stringResource(R.string.auth_error_confirm_password_required)
+    val strPassMismatch = stringResource(R.string.auth_password_mismatch)
+    val strSignupSuccess = stringResource(R.string.auth_signup_success)
+    val strWeakPass = stringResource(R.string.auth_weak_password)
+    val strInvalidEmailMsg = stringResource(R.string.auth_invalid_email)
+    val strEmailInUse = stringResource(R.string.auth_email_in_use)
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -63,14 +79,14 @@ fun SignInScreen(
         ) {
             androidx.compose.foundation.Image(
                 painter = painterResource(id = R.drawable.hoofcare),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.auth_logo_description),
                 modifier = Modifier
                     .width(300.dp)
                     .height(180.dp)
             )
 
             Text(
-                text = "Crie sua conta\n Digite seu email para se cadastrar nesse app.",
+                text = stringResource(R.string.auth_signup_title),
                 color = HoofWhite,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -78,102 +94,104 @@ fun SignInScreen(
 
             RoundedAuthTextField(
                 value = nome,
-                onValueChange = { nome = it },
-                placeholder = "Nome",
+                onValueChange = { nome = it; nomeError = null },
+                placeholder = stringResource(R.string.auth_name_placeholder),
                 modifier = Modifier.padding(top = 4.dp),
-                enabled = !isLoading
+                enabled = !isLoading,
+                isError = nomeError != null,
+                supportingText = nomeError
             )
 
             RoundedAuthTextField(
                 value = email,
-                onValueChange = { email = it },
-                placeholder = "email@exemplo.com",
+                onValueChange = { email = it; emailError = null },
+                placeholder = stringResource(R.string.auth_email_placeholder),
                 keyboardType = KeyboardType.Email,
                 modifier = Modifier.padding(top = 10.dp),
-                enabled = !isLoading
+                enabled = !isLoading,
+                isError = emailError != null,
+                supportingText = emailError
             )
 
             RoundedAuthTextField(
                 value = senha,
-                onValueChange = { senha = it },
-                placeholder = "Senha",
+                onValueChange = { senha = it; senhaError = null },
+                placeholder = stringResource(R.string.auth_password_placeholder),
                 isPassword = true,
                 keyboardType = KeyboardType.Password,
                 modifier = Modifier.padding(top = 10.dp),
-                enabled = !isLoading
+                enabled = !isLoading,
+                isError = senhaError != null,
+                supportingText = senhaError
             )
 
             RoundedAuthTextField(
                 value = confirmarSenha,
-                onValueChange = { confirmarSenha = it },
-                placeholder = "Confirmar Senha",
+                onValueChange = { confirmarSenha = it; confirmarSenhaError = null },
+                placeholder = stringResource(R.string.auth_confirm_password_placeholder),
                 isPassword = true,
                 keyboardType = KeyboardType.Password,
                 modifier = Modifier.padding(top = 10.dp),
-                enabled = !isLoading
+                enabled = !isLoading,
+                isError = confirmarSenhaError != null,
+                supportingText = confirmarSenhaError
             )
 
             if (isLoading) {
                 CircularProgressIndicator(color = HoofWhite, modifier = Modifier.padding(top = 16.dp))
             } else {
                 PrimaryAuthButton(
-                    text = "Continuar",
+                    text = stringResource(R.string.auth_signup_button),
                     onClick = {
                         val nomeTrim = nome.trim()
                         val emailTrim = email.trim()
                         val senhaTrim = senha.trim()
                         val confirmarSenhaTrim = confirmarSenha.trim()
 
-                        if (nomeTrim.isNotEmpty() && emailTrim.isNotEmpty() && senhaTrim.isNotEmpty() && confirmarSenhaTrim.isNotEmpty()) {
-                            if (senhaTrim != confirmarSenhaTrim) {
-                                Toast.makeText(context, "As senhas não coincidem.", Toast.LENGTH_SHORT).show()
-                                return@PrimaryAuthButton
+                        nomeError = if (nomeTrim.isEmpty()) strNameRequired else null
+                        emailError = when {
+                            emailTrim.isEmpty() -> strEmailRequired
+                            !emailTrim.contains("@") -> strInvalidEmail
+                            else -> null
+                        }
+                        senhaError = if (senhaTrim.isEmpty()) strPasswordRequired else null
+                        confirmarSenhaError = if (confirmarSenhaTrim.isEmpty()) strConfirmRequired else null
+
+                        if (nomeError != null || emailError != null || senhaError != null || confirmarSenhaError != null) {
+                            return@PrimaryAuthButton
+                        }
+
+                        if (senhaTrim != confirmarSenhaTrim) {
+                            confirmarSenhaError = strPassMismatch
+                            return@PrimaryAuthButton
+                        }
+
+                        isLoading = true
+                        scope.launch {
+                            try {
+                                AuthRepository.signUp(nomeTrim, emailTrim, senhaTrim)
+                                UserProfileData.nomeUsuario = nomeTrim
+                                
+                                Toast.makeText(context, strSignupSuccess, Toast.LENGTH_SHORT).show()
+                                onSignUpSuccess()
+                            } catch (e: FirebaseAuthWeakPasswordException) {
+                                Toast.makeText(context, strWeakPass, Toast.LENGTH_LONG).show()
+                            } catch (e: FirebaseAuthInvalidCredentialsException) {
+                                Toast.makeText(context, strInvalidEmailMsg, Toast.LENGTH_LONG).show()
+                            } catch (e: FirebaseAuthUserCollisionException) {
+                                Toast.makeText(context, strEmailInUse, Toast.LENGTH_LONG).show()
+                            } catch (e: Exception) {
+                                val msg = context.getString(R.string.auth_signup_error, e.localizedMessage ?: "")
+                                Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                            } finally {
+                                isLoading = false
                             }
-                            
-                            isLoading = true
-                            scope.launch {
-                                try {
-                                    AuthRepository.signUp(nomeTrim, emailTrim, senhaTrim)
-                                    UserProfileData.nomeUsuario = nomeTrim
-                                    
-                                    Toast.makeText(context, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
-                                    onSignUpSuccess()
-                                } catch (e: FirebaseAuthWeakPasswordException) {
-                                    Toast.makeText(context, "A senha é muito fraca.", Toast.LENGTH_LONG).show()
-                                } catch (e: FirebaseAuthInvalidCredentialsException) {
-                                    Toast.makeText(context, "E-mail inválido.", Toast.LENGTH_LONG).show()
-                                } catch (e: FirebaseAuthUserCollisionException) {
-                                    Toast.makeText(context, "Este e-mail já está em uso.", Toast.LENGTH_LONG).show()
-                                } catch (e: Exception) {
-                                    Toast.makeText(context, "Erro ao cadastrar: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
-                                } finally {
-                                    isLoading = false
-                                }
-                            }
-                        } else {
-                            Toast.makeText(context, "Preencha todos os campos antes de continuar.", Toast.LENGTH_SHORT).show()
                         }
                     },
                     modifier = Modifier.padding(top = 16.dp)
                 )
             }
 
-            OrDivider()
-
-            SocialAuthButton(
-                text = "Continuar com o Google",
-                iconRes = R.drawable.google_icon_mini,
-                onClick = { },
-                enabled = !isLoading
-            )
-
-            SocialAuthButton(
-                text = "Continuar com o Facebook",
-                iconRes = R.drawable.facebook_icon_mini,
-                onClick = { },
-                modifier = Modifier.padding(top = 8.dp),
-                enabled = !isLoading
-            )
         }
     }
 }

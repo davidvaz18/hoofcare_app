@@ -21,23 +21,10 @@ import androidx.compose.ui.unit.sp
 import com.example.hoof_care_02.data.repository.PetRepository
 import com.example.hoof_care_02.model.Breed
 import com.example.hoof_care_02.model.Dog
+import com.example.hoof_care_02.model.ALL_BREEDS
 import com.example.hoof_care_02.ui.theme.HoofGreenDark
 import kotlinx.coroutines.launch
 import java.util.*
-
-// Lista fixa de raças (pode ser migrada para o Firestore no futuro)
-private val FIXED_BREEDS = listOf(
-    Breed("1", "Labrador"),
-    Breed("2", "Poodle"),
-    Breed("3", "Bulldog"),
-    Breed("4", "Golden Retriever"),
-    Breed("5", "Pastor Alemão"),
-    Breed("6", "Yorkshire"),
-    Breed("7", "Beagle"),
-    Breed("8", "Shih Tzu"),
-    Breed("9", "Chihuahua"),
-    Breed("10", "Vira-lata")
-)
 
 /**
  * Calcula a idade em anos completos a partir de uma data de nascimento
@@ -80,6 +67,10 @@ fun AddPetScreen(
     var sex by remember { mutableStateOf<String?>(null) }
     var selectedBreed by remember { mutableStateOf<Breed?>(null) }
     var selectedBreedName by remember { mutableStateOf("") }
+    var nameError by remember { mutableStateOf<String?>(null) }
+    var breedError by remember { mutableStateOf<String?>(null) }
+    var sexError by remember { mutableStateOf<String?>(null) }
+    var birthdayError by remember { mutableStateOf<String?>(null) }
 
     var breedsExpanded by remember { mutableStateOf(false) }
     var sexExpanded by remember { mutableStateOf(false) }
@@ -87,9 +78,10 @@ fun AddPetScreen(
 
     LaunchedEffect(selectedBreedName) {
         if (selectedBreed?.name != selectedBreedName) {
-            val match = FIXED_BREEDS.firstOrNull { it.name.equals(selectedBreedName, ignoreCase = true) }
+            val match = ALL_BREEDS.firstOrNull { it.name.equals(selectedBreedName, ignoreCase = true) }
             if (match != null) {
                 selectedBreed = match
+                breedError = null
             }
         }
     }
@@ -101,6 +93,7 @@ fun AddPetScreen(
                 { _, year, month, dayOfMonth ->
                     birthdayApi = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth)
                     birthdayDisplay = String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year)
+                    birthdayError = null
                 },
                 Calendar.getInstance().get(Calendar.YEAR),
                 Calendar.getInstance().get(Calendar.MONTH),
@@ -134,10 +127,12 @@ fun AddPetScreen(
         ) {
             OutlinedTextField(
                 value = name,
-                onValueChange = { name = it },
+                onValueChange = { name = it; nameError = null },
                 label = { Text("Nome do Pet") },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !isLoading
+                enabled = !isLoading,
+                isError = nameError != null,
+                supportingText = nameError?.let { { Text(it, color = Color(0xFFD32F2F)) } }
             )
 
 
@@ -163,7 +158,7 @@ fun AddPetScreen(
                     )
                 )
 
-                val filteredBreeds = FIXED_BREEDS.filter {
+                val filteredBreeds = ALL_BREEDS.filter {
                     it.name.contains(selectedBreedName, ignoreCase = true)
                 }
 
@@ -187,42 +182,61 @@ fun AddPetScreen(
             }
 
 
-            if (selectedBreedName.isNotBlank()) {
+            if (selectedBreedName.isNotBlank() && selectedBreed == null) {
                 Text(
-                    text = if (selectedBreed != null) "✓ Raça reconhecida" else "Escolha uma raça da lista",
-                    color = if (selectedBreed != null) HoofGreenDark else Color.Red,
+                    text = "Escolha uma raça da lista",
+                    color = Color(0xFFD32F2F),
+                    fontSize = 12.sp,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            if (breedError != null) {
+                Text(
+                    text = breedError!!,
+                    color = Color(0xFFD32F2F),
                     fontSize = 12.sp,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
 
 
-            Box(modifier = Modifier.fillMaxWidth()) {
-                val sexDisplay = when(sex) {
-                    "M" -> "Macho"
-                    "F" -> "Fêmea"
-                    else -> "Escolha o gênero"
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    val sexDisplay = when(sex) {
+                        "M" -> "Macho"
+                        "F" -> "Fêmea"
+                        else -> "Escolha o gênero"
+                    }
+                    OutlinedTextField(
+                        value = sexDisplay,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Gênero") },
+                        trailingIcon = {
+                            IconButton(onClick = { if (!isLoading) sexExpanded = true }) {
+                                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !isLoading,
+                        isError = sexError != null
+                    )
+                    DropdownMenu(
+                        expanded = sexExpanded,
+                        onDismissRequest = { sexExpanded = false },
+                        modifier = Modifier.fillMaxWidth(0.9f)
+                    ) {
+                        DropdownMenuItem(text = { Text("Macho") }, onClick = { sex = "M"; sexError = null; sexExpanded = false })
+                        DropdownMenuItem(text = { Text("Fêmea") }, onClick = { sex = "F"; sexError = null; sexExpanded = false })
+                    }
                 }
-                OutlinedTextField(
-                    value = sexDisplay,
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Gênero") },
-                    trailingIcon = {
-                        IconButton(onClick = { if (!isLoading) sexExpanded = true }) {
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = null)
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !isLoading
-                )
-                DropdownMenu(
-                    expanded = sexExpanded,
-                    onDismissRequest = { sexExpanded = false },
-                    modifier = Modifier.fillMaxWidth(0.9f)
-                ) {
-                    DropdownMenuItem(text = { Text("Macho") }, onClick = { sex = "M"; sexExpanded = false })
-                    DropdownMenuItem(text = { Text("Fêmea") }, onClick = { sex = "F"; sexExpanded = false })
+                if (sexError != null) {
+                    Text(
+                        text = sexError!!,
+                        color = Color(0xFFD32F2F),
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                    )
                 }
             }
 
@@ -232,6 +246,14 @@ fun AddPetScreen(
                 enabled = !isLoading
             ) {
                 Text(birthdayDisplay)
+            }
+            if (birthdayError != null) {
+                Text(
+                    text = birthdayError!!,
+                    color = Color(0xFFD32F2F),
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
             }
 
             if (birthdayApi != null) {
@@ -258,40 +280,39 @@ fun AddPetScreen(
             } else {
                 Button(
                     onClick = {
-                        val missingFields = mutableListOf<String>()
-                        if (name.isBlank()) missingFields.add("Nome")
-                        if (selectedBreed == null) missingFields.add("Raça")
-                        if (sex == null) missingFields.add("Gênero")
-                        if (birthdayApi == null) missingFields.add("Data de Nascimento")
+                        nameError = if (name.isBlank()) "Nome é obrigatório" else null
+                        breedError = if (selectedBreed == null) "Selecione uma raça" else null
+                        sexError = if (sex == null) "Selecione o gênero" else null
+                        birthdayError = if (birthdayApi == null) "Selecione a data de nascimento" else null
 
-                        if (missingFields.isNotEmpty()) {
-                            Toast.makeText(context, "Faltando: ${missingFields.joinToString(", ")}", Toast.LENGTH_LONG).show()
-                        } else {
-                            isLoading = true
-                            scope.launch {
-                                try {
-                                    val dog = Dog(
-                                        id = "",
-                                        name = name,
-                                        age = calcularIdadeAPartirDoNascimento(birthdayApi),
-                                        sex = sex!!,
-                                        photo = null,
-                                        birthday = birthdayApi,
-                                        weight = weight.toDoubleOrNull(),
-                                        breed = selectedBreed!!
-                                    )
-                                    val result = PetRepository.saveDog(dog)
-                                    if (result.isSuccess) {
-                                        Toast.makeText(context, "Pet cadastrado com sucesso!", Toast.LENGTH_SHORT).show()
-                                        onSuccess()
-                                    } else {
-                                        Toast.makeText(context, "Erro: ${result.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
-                                        isLoading = false
-                                    }
-                                } catch (e: Exception) {
-                                    Toast.makeText(context, "Erro inesperado: ${e.message}", Toast.LENGTH_LONG).show()
+                        if (nameError != null || breedError != null || sexError != null || birthdayError != null) {
+                            return@Button
+                        }
+
+                        isLoading = true
+                        scope.launch {
+                            try {
+                                val dog = Dog(
+                                    id = "",
+                                    name = name,
+                                    age = calcularIdadeAPartirDoNascimento(birthdayApi),
+                                    sex = sex!!,
+                                    photo = null,
+                                    birthday = birthdayApi,
+                                    weight = weight.toDoubleOrNull(),
+                                    breed = selectedBreed!!
+                                )
+                                val result = PetRepository.saveDog(dog)
+                                if (result.isSuccess) {
+                                    Toast.makeText(context, "Pet cadastrado com sucesso!", Toast.LENGTH_SHORT).show()
+                                    onSuccess()
+                                } else {
+                                    Toast.makeText(context, "Erro: ${result.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
                                     isLoading = false
                                 }
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "Erro inesperado: ${e.message}", Toast.LENGTH_LONG).show()
+                                isLoading = false
                             }
                         }
                     },

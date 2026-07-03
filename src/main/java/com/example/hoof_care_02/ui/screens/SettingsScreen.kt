@@ -1,6 +1,5 @@
 package com.example.hoof_care_02.ui.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -76,17 +75,6 @@ fun SettingsScreen(
 
             SettingsSectionTitle("CONTA")
             SettingsCard {
-                SettingsClickableItem(
-                    iconRes = R.drawable.delete_conta_ic,
-                    title = "Deletar conta",
-                    subtitle = "Esta ação é permanente e não pode ser desfeita.",
-                    titleColor = Color(0xFFD32F2F),
-                    iconColor = Color(0xFFD32F2F),
-                    onClick = { Toast.makeText(context, "Funcionalidade de deletar conta em breve", Toast.LENGTH_SHORT).show() }
-                )
-                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = Color(0xFFE0E0E0))
-                
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -97,29 +85,12 @@ fun SettingsScreen(
                         .padding(vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null, tint = Color(0xFFD32F2F))
+                    Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Sair", tint = Color(0xFFD32F2F))
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(text = "Sair", color = Color(0xFFD32F2F), fontWeight = FontWeight.Bold)
                 }
             }
 
-
-            SettingsSectionTitle("SOBRE")
-            SettingsCard {
-                SettingsClickableItem(
-                    iconRes = R.drawable.info_ic,
-                    title = "Sobre o HoofCare",
-                    showArrow = true,
-                    onClick = { Toast.makeText(context, "Sobre o HoofCare", Toast.LENGTH_SHORT).show() }
-                )
-                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = Color(0xFFE0E0E0))
-                SettingsClickableItem(
-                    iconRes = R.drawable.info_ic,
-                    title = "Sobre o App",
-                    showArrow = true,
-                    onClick = { Toast.makeText(context, "Sobre o App", Toast.LENGTH_SHORT).show() }
-                )
-            }
 
             Spacer(modifier = Modifier.height(24.dp))
 

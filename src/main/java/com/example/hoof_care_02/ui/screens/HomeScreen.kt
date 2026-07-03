@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,12 +34,15 @@ fun HomeScreen(
     onNavigateToSaude: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val userName = UserProfileData.nomeUsuario ?: "Usuário"
+    val strUsernameFallback = stringResource(R.string.common_username_fallback)
+    val strSelectPetFirst = stringResource(R.string.home_select_pet_first)
+    val userName = UserProfileData.nomeUsuario ?: strUsernameFallback
     val selectedPet = UserProfileData.cachorroSelecionado
 
     Scaffold(
         bottomBar = {
             AppBottomNavigationBar(
+                selectedTab = BottomNavTab.HOME,
                 onHomeClick = { /* Já estamos na Home */ },
                 onPetsClick = onNavigateToPets,
                 onProfileClick = onNavigateToProfile
@@ -63,7 +67,7 @@ fun HomeScreen(
                     if (photoUrl != null) {
                         coil.compose.AsyncImage(
                             model = photoUrl,
-                            contentDescription = null,
+                            contentDescription = stringResource(R.string.home_user_photo),
                             modifier = Modifier
                                 .size(60.dp)
                                 .clip(CircleShape)
@@ -74,7 +78,7 @@ fun HomeScreen(
                     } else {
                         Image(
                             painter = painterResource(id = R.drawable.fotousuario),
-                            contentDescription = null,
+                            contentDescription = stringResource(R.string.home_user_photo),
                             modifier = Modifier
                                 .size(60.dp)
                                 .clip(CircleShape)
@@ -83,7 +87,7 @@ fun HomeScreen(
                     }
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(
-                        text = "Olá, $userName!",
+                        text = stringResource(R.string.common_hello, userName),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Medium
                     )
@@ -92,7 +96,7 @@ fun HomeScreen(
                 IconButton(onClick = onNavigateToSettings) {
                     Image(
                         painter = painterResource(id = R.drawable.settings_icon),
-                        contentDescription = "Configurações",
+                        contentDescription = stringResource(R.string.home_settings),
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -101,7 +105,7 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                text = "De quem falamos hoje?",
+                text = stringResource(R.string.home_title),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -117,7 +121,7 @@ fun HomeScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF38C075))
             ) {
                 Text(
-                    text = selectedPet?.name ?: "Selecione um Pet",
+                    text = selectedPet?.name ?: stringResource(R.string.home_select_pet),
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
@@ -134,14 +138,14 @@ fun HomeScreen(
             ) {
 
                 HomeActionButton(
-                    text = "Encontre\nClínicas veterinárias próximas de você",
+                    text = stringResource(R.string.home_clinics_card),
                     modifier = Modifier.weight(1f).height(130.dp),
                     onClick = onNavigateToClinicas
                 )
 
 
                 HomeActionCard(
-                    text = "Lembretes",
+                    text = stringResource(R.string.home_reminders_card),
                     iconRes = R.drawable.imgalimentacao,
                     modifier = Modifier.weight(1f).height(130.dp),
                     onClick = onNavigateToLembretes
@@ -156,14 +160,14 @@ fun HomeScreen(
             ) {
 
                 HomeActionCard(
-                    text = "Saúde",
+                    text = stringResource(R.string.home_health_card),
                     iconRes = R.drawable.imgsaude,
                     modifier = Modifier.weight(1f).height(130.dp),
                     onClick = {
                         if (selectedPet != null) {
                             onNavigateToSaude(selectedPet.id)
                         } else {
-                            Toast.makeText(context, "Selecione um pet primeiro.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, strSelectPetFirst, Toast.LENGTH_SHORT).show()
                         }
                     }
                 )
